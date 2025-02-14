@@ -1,36 +1,35 @@
 #pragma once
+#include "chrono"
 #include "d3d12.h"
-#include"dxgi1_6.h"
-#include"WinApp.h"
 #include "dxcapi.h"
-#include "wrl.h"
+#include "dxgi1_6.h"
 #include "string"
-#include"chrono"
-#include "externals/DirectXTex/DirectXTex.h"
+#include "wrl.h"
+
+#include "DirectXTex.h"
+#include "WinApp.h"
+
 #include <Vector4.h>
 
 // DirectX基盤
 class DirectXCommon {
+#pragma region シングルトンインスタンス
 private:
 	static DirectXCommon* instance;
 
 	DirectXCommon() = default;
 	~DirectXCommon() = default;
 	DirectXCommon(DirectXCommon&) = delete;
-	DirectXCommon& operator=(DirectXCommon&) = delete;
+	DirectXCommon& operator = (DirectXCommon&) = delete;
 
-public: // メンバ関数
-
-	/// <summary>
-	/// シングルトンインスタンスの取得
-	/// </summary>
-	/// <returns></returns>
+public:
+	// シングルトンインスタンスの取得
 	static DirectXCommon* GetInstance();
-
-	/// <summary>
-	/// 終了
-	/// </summary>
+	// 終了
 	void Finalize();
+#pragma endregion シングルトンインスタンス
+
+public:
 
 	/// <summary>
 	/// 初期化

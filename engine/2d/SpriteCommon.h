@@ -21,7 +21,6 @@ public:
 	void Finalize();
 #pragma endregion シングルトンインスタンス
 
-
 public: // メンバ関数
 
 	/// <summary>

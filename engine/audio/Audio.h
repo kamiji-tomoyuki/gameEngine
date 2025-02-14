@@ -34,6 +34,7 @@ private:
 
 	static const int kMaxSoundData = 2108;
 
+	// --- 構造体 ---
 	struct ChunkHeader
 	{
 		char id[4];
