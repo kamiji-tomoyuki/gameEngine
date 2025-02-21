@@ -1,7 +1,8 @@
 #include "Sprite.h"
 #include "SpriteCommon.h"
-#include "math/myMath.h"
 #include "TextureManager.h"
+
+#include "myMath.h"
 
 void Sprite::Initialize(const std::string& textureFilePath, Vector2 position, Vector4 color, Vector2 anchorpoint, bool isFlipX, bool isFlipY)
 {
@@ -11,7 +12,7 @@ void Sprite::Initialize(const std::string& textureFilePath, Vector2 position, Ve
 	// --- パスを設定 ---
 	fullpath = basePath_ + textureFilePath;
 
-	// --- 各データ生成
+	// --- 各データ生成 ---
 	CreateVartexData();
 	CreateMaterialData();
 	CreateTransformationMatrixData();

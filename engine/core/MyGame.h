@@ -1,8 +1,9 @@
 #pragma once
-#include"Framework.h"
+#include "Framework.h"
 #include "memory"
-#include"GameScene.h"
-#include"TitleScene.h"
+
+#include "TitleScene.h"
+#include "GameScene.h"
 
 class MyGame : public Framework
 {
@@ -27,8 +28,4 @@ public: // メンバ関数
 	/// 描画
 	/// </summary>
 	void Draw()override;
-
-private:
-	// シーン
-
 };

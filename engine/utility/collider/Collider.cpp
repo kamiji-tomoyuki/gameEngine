@@ -1,5 +1,6 @@
 #include "Collider.h"
-#include"CollisionManager.h"
+#include "CollisionManager.h"
+
 #include <line/DrawLine3D.h>
 
 int Collider::counter = -1;  // 初期値を-1に変更
@@ -48,7 +49,7 @@ Collider::Collider() {
 Collider::~Collider()
 {
 	CollisionManager::RemoveCollider(this);
-	counter--;  // カウンターをデクリメント
+	counter--; // カウンターをデクリメント
 }
 
 void Collider::Initialize() {

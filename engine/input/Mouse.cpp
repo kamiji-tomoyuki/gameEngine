@@ -1,15 +1,17 @@
-#include"Mouse.h"
+#include "Mouse.h"
+#include <assert.h>
 #include <cmath>
-#include"myMath.h"
-#include<assert.h>
+
+#include "myMath.h"
+
 void Mouse::Init(Microsoft::WRL::ComPtr<IDirectInput8>directInput,HWND hWnd) {
     hWnd_ = hWnd;
-    //マウスデバイスの生成
+    // マウスデバイスの生成
   HRESULT  result = directInput->CreateDevice(GUID_SysMouse, &devMouse_, NULL);
     assert(SUCCEEDED(result));
     mousePosition_ = { 0.0f, 0.0f }; // 初期値の確認
 
-    //入力データ形式のセット
+    // 入力データ形式のセット
     result = devMouse_->SetDataFormat(&c_dfDIMouse2);
     assert(SUCCEEDED(result));
 
@@ -24,8 +26,6 @@ void Mouse::Update() {
     devMouse_->Acquire();
     devMouse_->GetDeviceState(sizeof(mouse_), &mouse_);
 }
-
-//マウス****************************************************************
 
 bool Mouse::IsPressMouse(int32_t buttonNumber)const {
     return(mouse_.rgbButtons[buttonNumber] & 0x80);

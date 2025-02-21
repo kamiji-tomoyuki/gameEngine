@@ -1,10 +1,13 @@
 #pragma once
-#include"externals/nlohmann/json.hpp"
+#include "externals/nlohmann/json.hpp"
 #include "map"
-#include "Vector3.h"
-#include "Vector2.h"
 #include "string"
 #include "variant"
+
+#include "Vector2.h"
+#include "Vector3.h"
+
+// json
 class GlobalVariables {
 public:
 	/// <summary>

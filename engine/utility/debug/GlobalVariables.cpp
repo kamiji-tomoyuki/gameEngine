@@ -1,10 +1,10 @@
-#include "GlobalVariables.h"
 #include "Windows.h"
 #include "fstream"
+#include "GlobalVariables.h"
+
 #ifdef _DEBUG
 #include "imgui.h"
 #endif // _DEBUG
-
 
 void GlobalVariables::Update() {
 #ifdef _DEBUG

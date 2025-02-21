@@ -1,23 +1,22 @@
 #pragma once
-
-#include <variant>
-//std
-#include<wrl.h>
-#include<vector>
 #include <array>
-#include<memory>
-
-#include"Vector2.h"
+#include <memory>
+#include <variant>
+#include <vector>
+#include <wrl.h>
 
 #define DIRECTNPUT_VERSION 0x0800//バージョン指定
+#include <dinput.h>
 #include <XInput.h>
-#include<dinput.h>
-//input
-#include"Mouse.h"
+
+#include "Mouse.h"
+
+#include "Vector2.h"
 
 class Input {
 
 private:
+
 	enum class PadType {
 		DirectInput,
 		XInput,
@@ -33,12 +32,13 @@ private:
 		State statePre_;
 	};
 private:
+
 	Microsoft::WRL::ComPtr<IDirectInput8>directInput_ = nullptr;
 	Microsoft::WRL::ComPtr<IDirectInputDevice8> keyboard_ = nullptr;
 	std::array<BYTE, 256> key_;
 	std::array<BYTE, 256> keyPre_;
 	std::vector<Joystick>joysticks_;
-	//マウス
+	
 	static std::unique_ptr<Mouse>mouse_;
 
 public:
@@ -115,14 +115,14 @@ public:
 	/// <summary>
 	/// マウスの押下をチェック
 	/// </summary>
-	/// <param name="buttonNumber">マウスボタン番号(0:左,1:右,2:中,3~7:拡張マウスボタン)</param>
+	/// <param name="buttonNumber">マウスボタン番号 (0:左,1:右,2:中,3~7:拡張マウスボタン)</param>
 	/// <returns>押されているか</returns>
 	static	bool IsPressMouse(int32_t mouseNumber);
 
 	/// <summary>
 	/// マウスのトリガーをチェック。押した瞬間だけtrueになる
 	/// </summary>
-	/// <param name="buttonNumber">マウスボタン番号(0:左,1:右,2:中,3~7:拡張マウスボタン)</param>
+	/// <param name="buttonNumber">マウスボタン番号 (0:左,1:右,2:中,3~7:拡張マウスボタン)</param>
 	/// <returns>トリガーか</returns>
 	static	bool IsTriggerMouse(int32_t buttonNumber);
 
@@ -135,7 +135,7 @@ public:
 	/// <summary>
 	/// ホイールスクロール量を取得する
 	/// </summary>
-	/// <returns>ホイールスクロール量。奥側に回したら+。Windowsの設定で逆にしてたら逆</returns>
+	/// <returns>ホイールスクロール量 奥側に回したら+ Windowsの設定で逆にしてたら逆</returns>
 	static	int32_t GetWheel();
 
 	/// <summary>
@@ -145,13 +145,12 @@ public:
 	static	 Vector2 GetMousePos();
 
 	/// <summary>
-		/// 3Dのマウス座標
-		/// </summary>
-		/// <param name="viewprojection"></param>
-		/// <param name="depthFactor"></param>
-		/// <returns></returns>
+	/// 3Dのマウス座標
+	/// </summary>
+	/// <param name="viewprojection"></param>
+	/// <param name="depthFactor"></param>
+	/// <returns></returns>
 	static Vector3 GetMousePos3D(const ViewProjection& viewprojection, float depthFactor, float blockSpacing = 1.0f);
-
 
 	const BYTE* GetKeyState() const { return key_.data(); }
 	const BYTE* GetPreviousKeyState() const { return keyPre_.data(); }

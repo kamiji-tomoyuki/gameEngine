@@ -1,12 +1,17 @@
 #pragma once
 #include <d3d12.h>
-#include"wrl.h"
+#include "wrl.h"
+#include "SrvManager.h"
+
 #include <PipeLineManager.h>
-#include"SrvManager.h"
-#include <Matrix4x4.h>
-#include"myMath.h"
+
+#include "myMath.h"
 #include <Vector2.h>
+#include <Matrix4x4.h>
+
 class DirectXCommon;
+
+// オフスクリーン
 class OffScreen
 {
 public:
@@ -17,6 +22,7 @@ public:
 	void DrawCommonSetting();
 
 	void SetProjection(Matrix4x4 projectionMatrix) { projectionInverse_ = projectionMatrix; }
+
 private:
 
 	void CreateSmooth();
@@ -24,17 +30,18 @@ private:
 	void CreateVignette();
 	void CreateDepth();
 	void CreateRadial();
+
 private:
 	DirectXCommon* dxCommon;
 	SrvManager* srvManager_;
 	std::unique_ptr<PipeLineManager> psoManager_ = nullptr;
+
 	// ルートシグネチャ
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature[6];
 
 	// グラフィックスパイプライン
 	Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState[8];
 	ShaderMode shaderMode_ = ShaderMode::kNone;
-
 
 	struct KernelSettings {
 		int kernelSize;

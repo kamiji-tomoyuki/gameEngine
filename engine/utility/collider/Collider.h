@@ -1,18 +1,23 @@
 #pragma once
-#include"Vector3.h"
-#include"WorldTransform.h"
-#include"Object3d.h"
-#include"ViewProjection.h"
-#include"GlobalVariables.h"
+#include "GlobalVariables.h"
+#include "Object3d.h"
+#include "ViewProjection.h"
+#include "WorldTransform.h"
+
+#include "Vector3.h"
+
 struct AABB {
 	Vector3 min; //!< 最小点
 	Vector3 max; //!< 最大点
 };
+
 struct OBB {
 	Vector3 center;          //!< 中心点
 	Vector3 orientations[3]; //!< 座標軸。正規化・直行必須
 	Vector3 size;            //!< 座標軸方向の長さの半分。中心から面までの距離
 };
+
+// 当たり判定管理
 class Collider {
 public:
 
@@ -67,13 +72,9 @@ public:
 	/// <param name="other"></param>
 	virtual void OnCollisionOut([[maybe_unused]] Collider* other) {};
 
-	/// <summary>
-	/// getter
-	/// </summary>
+	/// 各ステータス取得関数
 	/// <returns></returns>
-	// 半径を取得
 	float GetRadius() { return radius_; }
-	// 中心座標を取得
 	virtual Vector3 GetCenterPosition() const = 0;
 	virtual Vector3 GetCenterRotation() const = 0;
 	Vector3 GetCenter() { return Cubewt_.translation_; }
@@ -83,10 +84,8 @@ public:
 	bool IsColliding() const { return isColliding; }
 	bool WasColliding() const { return wasColliding; }
 
-	/// <summary>
-	/// setter
-	/// </summary>
-	/// <param name="radius"></param>
+	/// 各ステータス設定関数
+	/// <returns></returns>
 	void SetRadius(float radius) { radius_ = radius; }
 	void SetIsColliding(bool colliding) { wasColliding = isColliding; isColliding = colliding; }
 	void SetCollisionEnabled(bool enabled) { isCollisionEnabled_ = enabled; }

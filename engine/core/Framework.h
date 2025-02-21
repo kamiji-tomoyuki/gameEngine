@@ -1,25 +1,25 @@
 #pragma once
-#include"DirectXCommon.h"
-#ifdef _DEBUG
-#endif // _DEBUG
-#include"Input.h"
-#include"Object3dCommon.h"
+// 基盤クラス
+#include "AbstractSceneFactory.h"
+#include "AnimationManager.h"
+#include "Audio.h"
+#include "CollisionManager.h"
+#include "DirectXCommon.h"
+#include "Input.h"
+#include "ModelManager.h"
+#include "Object3dCommon.h"
+#include "OffScreen.h"
+#include "ParticleCommon.h"
+#include "SceneManager.h"
 #include "SpriteCommon.h"
 #include "SrvManager.h"
-#include "Audio.h"
-#include "SceneManager.h"
-#include "AbstractSceneFactory.h"
-#include "ParticleCommon.h"
-#include "CollisionManager.h"
-#include "ModelManager.h"
 #include "TextureManager.h"
-#include "AnimationManager.h"
-#include "engine/offscreen/OffScreen.h"
+
 #include <line/DrawLine3D.h>
 
 class Framework
 {
-public:// メンバ関数
+public: // メンバ関数
 
 	virtual ~Framework() = default;
 
@@ -39,7 +39,7 @@ public:// メンバ関数
 	virtual void Finalize();
 
 	/// <summary>
-	/// 更新
+	/// 更新処理
 	/// </summary>
 	virtual void Update();
 
@@ -49,7 +49,7 @@ public:// メンバ関数
 	void LoadResource();
 
 	/// <summary>
-	/// 描画
+	/// 描画処理
 	/// </summary>
 	virtual void Draw() = 0;
 
@@ -60,7 +60,9 @@ public:// メンバ関数
 	/// </summary>
 	/// <returns></returns>
 	virtual bool IsEndRequest() { return endRequest_; }
+
 private:
+
 	/// <summary>
     ///  FPS表示
     /// </summary>

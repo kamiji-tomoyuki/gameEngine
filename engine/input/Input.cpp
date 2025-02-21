@@ -1,5 +1,6 @@
 #include "Input.h"
-#include<assert.h>
+#include <assert.h>
+
 #pragma comment(lib, "dinput8.lib")
 #pragma comment(lib, "dxguid.lib")
 #pragma comment(lib, "xinput.lib")
@@ -58,17 +59,12 @@ void Input::Init(HINSTANCE hInstance, HWND hWnd) {
 
 void Input::Update() {
 	keyPre_ = key_;
-	//キーボードの情報の取得開始
+	// キーボードの情報の取得開始
 	keyboard_->Acquire();
-	//全キーの入力状態を取得する
+	// 全キーの入力状態を取得する
 	keyboard_->GetDeviceState(sizeof(key_), key_.data());
 
 	mouse_->Update();//マウス更新
-
-
-	// マウスの位置を更新
-	/*mousePosition_.x += static_cast<float>(mouse_.lX);
-	mousePosition_.y += static_cast<float>(mouse_.lY);*/
 
 	for (auto& joystick : joysticks_) {
 		if (joystick.type_ == PadType::XInput) {
@@ -84,7 +80,6 @@ void Input::Update() {
 	}
 }
 
-//キーボード*************************************************************
 bool Input::PushKey(BYTE keyNumber)const {
 	return (key_[keyNumber] & 0x80);
 }
@@ -103,8 +98,6 @@ bool Input::ReleaseKey(BYTE keyNumber)const {
 bool Input::ReleaseMomentKey(BYTE keyNumber)const {
 	return !(key_[keyNumber] & 0x80) && (keyPre_[keyNumber] & 0x80);
 }
-
-//ゲームパッド*******************************************************************
 
 template<typename T>bool Input::GetJoystickState(int32_t stickNo, T& out)const {
 	if (stickNo < 0 || stickNo >= joysticks_.size()) {
@@ -129,7 +122,6 @@ template<typename T>bool Input::GetJoystickState(int32_t stickNo, T& out)const {
 	}
 	return false;
 }
-
 
 template<typename T>bool Input::GetJoystickStatePrevious(int32_t stickNo, T& out) const {
 	if (stickNo < 0 || stickNo >= joysticks_.size()) {
@@ -169,8 +161,6 @@ size_t Input::GetNumberOfJoysticks()const {
 	return joysticks_.size();
 }
 
-//マウス****************************************************************
-
 bool Input::IsPressMouse(int32_t buttonNumber) {
 	return mouse_->IsPressMouse(buttonNumber);
 }
@@ -186,7 +176,6 @@ MouseMove Input::GetMouseMove() {
 Vector3 Input::GetMousePos3D(const ViewProjection& viewprojection, float depthFactor, float blockSpacing) {
 	return mouse_->GetMousePos3D(viewprojection, depthFactor, blockSpacing);
 }
-
 
 int32_t Input::GetWheel() {
 	return mouse_->GetWheel();

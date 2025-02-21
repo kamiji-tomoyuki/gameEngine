@@ -1,10 +1,11 @@
 #pragma once
 #include <dinput.h>
-#include <wrl.h>
 #include <variant>
+#include <wrl.h>
 
-#include"ViewProjection.h"
-#include"Vector2.h"
+#include "ViewProjection.h"
+
+#include "Vector2.h"
 
 struct MouseMove {
 	LONG lX;
@@ -12,32 +13,39 @@ struct MouseMove {
 	LONG lZ;
 };
 
+// マウス
 class Mouse {
 private:
-	//マウス
+
 	Microsoft::WRL::ComPtr<IDirectInputDevice8> devMouse_;
 	DIMOUSESTATE2 mouse_;
 	DIMOUSESTATE2 mousePre_;
 	Vector2 mousePosition_;
 	HWND hWnd_;
-public:
-	
 
-	//初期化、更新
+public:
+
+	/// <summary>
+	/// 初期化
+	/// </summary>
 	void Init(Microsoft::WRL::ComPtr<IDirectInput8>directInput,HWND hWnd);
+	
+	/// <summary>
+	/// 更新処理
+	/// </summary>
 	void Update();
 
 	/// <summary>
-		/// マウスの押下をチェック
-		/// </summary>
-		/// <param name="buttonNumber">マウスボタン番号(0:左,1:右,2:中,3~7:拡張マウスボタン)</param>
-		/// <returns>押されているか</returns>
+	/// マウスの押下をチェック
+	/// </summary>
+	/// <param name="buttonNumber">マウスボタン番号 (0:左,1:右,2:中,3~7:拡張マウスボタン)</param>
+	/// <returns>押されているか</returns>
 	bool IsPressMouse(int32_t mouseNumber) const;
 
 	/// <summary>
-	/// マウスのトリガーをチェック。押した瞬間だけtrueになる
+	/// マウスのトリガーをチェック 押した瞬間だけtrueになる
 	/// </summary>
-	/// <param name="buttonNumber">マウスボタン番号(0:左,1:右,2:中,3~7:拡張マウスボタン)</param>
+	/// <param name="buttonNumber">マウスボタン番号 (0:左,1:右,2:中,3~7:拡張マウスボタン)</param>
 	/// <returns>トリガーか</returns>
 	bool IsTriggerMouse(int32_t buttonNumber) const;
 
@@ -50,7 +58,7 @@ public:
 	/// <summary>
 	/// ホイールスクロール量を取得する
 	/// </summary>
-	/// <returns>ホイールスクロール量。奥側に回したら+。Windowsの設定で逆にしてたら逆</returns>
+	/// <returns>ホイールスクロール量 奥側に回したら+ Windowsの設定で逆にしてたら逆</returns>
 	int32_t GetWheel() const;
 
 	/// <summary>

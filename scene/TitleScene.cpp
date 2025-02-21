@@ -17,7 +17,7 @@ void TitleScene::Initialize()
 	ptCommon_ = ParticleCommon::GetInstance();
 	input_ = Input::GetInstance();
 	vp_.Initialize();
-	vp_.translation_ = { 0.0f,0.0f,-30.0f };
+	vp_.translation_ = { 0.0f,0.0f,-10.0f };
 
 	debugCamera_ = std::make_unique<DebugCamera>();
 	debugCamera_->Initialize(&vp_);
@@ -125,7 +125,7 @@ void TitleScene::DrawForOffScreen()
 
 	objCommon_->DrawCommonSetting();
 	//-----3DObjectの描画開始-----
-	//sphere_->Draw(wt2_, vp_);
+	
 	//--------------------------
 
 	/// Particleの描画準備
@@ -144,21 +144,15 @@ void TitleScene::DrawForOffScreen()
 void TitleScene::Debug()
 {
 	ImGui::Begin("TitleScene:Debug");
+
 	debugCamera_->imgui();
+
 	LightGroup::GetInstance()->imgui();
+
 	ImGui::Checkbox("roop", &roop);
 
-	if (ImGui::Button("walk")) {
-		walk_->SetAnimation("walk.gltf");
-	}
-	if (ImGui::Button("sneakWalk")) {
-		walk_->SetAnimation("sneakWalk.gltf");
-	}
-	if (ImGui::Button("Jump")) {
-		walk_->SetAnimation("test.gltf");
-	}
-
 	ImGui::End();
+
 	emitter_->imgui();
 }
 

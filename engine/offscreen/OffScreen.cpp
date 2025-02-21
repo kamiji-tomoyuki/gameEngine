@@ -1,7 +1,8 @@
 #include "OffScreen.h"
-#include"DirectXCommon.h"
+#include "DirectXCommon.h"
+
 #ifdef _DEBUG
-#include"imgui.h"
+#include "imgui.h"
 #endif // _DEBUG
 
 void OffScreen::Initialize()
@@ -169,6 +170,6 @@ void OffScreen::CreateRadial()
 {
 	radialResource = dxCommon->CreateBufferResource(sizeof(RadialBlur));
 	radialResource->Map(0, nullptr, reinterpret_cast<void**>(&radialData));
-	radialData->kBlurWidth = 0.01f;   // 発光のしきい値（低いほど多くの部分が発光）
+	radialData->kBlurWidth = 0.01f;
 	radialData->kCenter = { 0.5f,0.5f };
 }

@@ -1,9 +1,12 @@
 #pragma once
 #include"WinApp.h"
 #include"DirectXCommon.h"
+
+// ImGui管理
 class ImGuiManager
 {
 private:
+
 	static ImGuiManager* instance;
 
 	ImGuiManager() = default;
