@@ -13,7 +13,7 @@ bool JsonLoader::LoadFromFile(const std::string& filePath) {
         file >> jsonData_;
         return true;
     }
-    catch (const std::exception& e) {
+    catch (const std::exception&) {
         return false;
     }
 }
@@ -29,7 +29,7 @@ bool JsonLoader::SaveToFile(const std::string& filePath) const {
         file << jsonData_.dump(4);
         return true;
     }
-    catch (const std::exception& e) {
+    catch (const std::exception&) {
         return false;
     }
 }
