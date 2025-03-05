@@ -10,6 +10,8 @@
 #include "SpriteCommon.h"
 #include "WorldTransform.h"
 
+#include "JsonLoader.h"
+
 class TitleScene :public BaseScene
 {
 public: // メンバ関数
@@ -67,6 +69,8 @@ private:
 	std::unique_ptr<Object3d> obb;
 
 	std::unique_ptr<ParticleEmitter> emitter_;
+
+	std::unique_ptr<JsonLoader> json_;
 
 	bool roop = true;
 };

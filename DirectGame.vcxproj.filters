@@ -326,7 +326,7 @@
     <ClCompile Include="engine\3d\model\animation\ModelAnimation.cpp">
       <Filter>ソースファイル\myEngine\3d\model\animation</Filter>
     </ClCompile>
-    <ClCompile Include="engine\utility\json\jsonLoader.cpp">
+    <ClCompile Include="engine\utility\json\JsonLoader.cpp">
       <Filter>ソースファイル\myEngine\utility\json</Filter>
     </ClCompile>
   </ItemGroup>
@@ -556,7 +556,7 @@
     <ClInclude Include="engine\3d\model\animation\Skin.h">
       <Filter>ソースファイル\myEngine\3d\model\animation</Filter>
     </ClInclude>
-    <ClInclude Include="engine\utility\json\jsonLoader.h">
+    <ClInclude Include="engine\utility\json\JsonLoader.h">
       <Filter>ソースファイル\myEngine\utility\json</Filter>
     </ClInclude>
     <ClInclude Include="engine\utility\graphics\AnimationManager.h">

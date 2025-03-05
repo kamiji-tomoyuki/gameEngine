@@ -40,6 +40,14 @@ void TitleScene::Initialize()
 	emitter_ = std::make_unique<ParticleEmitter>();
 	emitter_->Initialize("test", "debug/plane.obj");
 
+	json_ = std::make_unique<JsonLoader>();
+	std::string filePath = "scene/test.json";
+	std::string targetName = "ICO球";
+
+	if (json_->GetName(filePath, targetName)) {
+		Vector3 position = json_->GetWorldTransform(filePath, targetName);
+		wt1_.translation_ = position;
+	}
 }
 
 void TitleScene::Finalize()

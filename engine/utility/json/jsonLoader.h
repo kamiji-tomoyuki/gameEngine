@@ -1,8 +1,9 @@
 #pragma once
 #include <string>
-#include <optional>
 #include <vector>
 #include <json.hpp>
+
+#include <Vector3.h>
 
 // JSONローダー
 class JsonLoader {
@@ -67,11 +68,10 @@ public:
     /// <param name="filePath">: JSONファイルのパス</param>
     /// <param name="targetName">: 取得するオブジェクトの名前</param>
     /// <returns>ワールド座標 (x, y, z) のリスト</returns>
-    std::optional<std::vector<float>> GetWorldTransform(const std::string& filePath, const std::string& targetName) const;
+    Vector3 GetWorldTransform(const std::string& filePath, const std::string& targetName) const;
 
 private:
 
     nlohmann::json jsonData_;
-
 
 };

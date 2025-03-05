@@ -78,32 +78,32 @@ bool JsonLoader::GetName(const std::string& filePath, const std::string& targetN
     return false;
 }
 
-std::optional<std::vector<float>> JsonLoader::GetWorldTransform(const std::string& filePath, const std::string& targetName) const {
+Vector3 JsonLoader::GetWorldTransform(const std::string& filePath, const std::string& targetName) const {
     const std::string fullPath = "resources/jsons/" + filePath;
 
     std::ifstream file(fullPath);
     if (!file.is_open()) {
-        return std::nullopt;
+        return Vector3(0.0f, 0.0f, 0.0f); // デフォルト値を返す
     }
     nlohmann::json jsonData;
     try {
         file >> jsonData;
     }
     catch (const std::exception&) {
-        return std::nullopt;
+        return Vector3(0.0f, 0.0f, 0.0f);
     }
     if (!jsonData.contains("objects") || !jsonData["objects"].is_array()) {
-        return std::nullopt;
+        return Vector3(0.0f, 0.0f, 0.0f);
     }
     for (const auto& obj : jsonData["objects"]) {
         if (obj.contains("name") && obj["name"] == targetName) {
             if (obj.contains("transform") && obj["transform"].contains("translation")) {
                 std::vector<float> position = obj["transform"]["translation"];
                 if (position.size() == 3) {
-                    return position;
+                    return Vector3(position[0], position[1], position[2]);
                 }
             }
         }
     }
-    return std::nullopt;
+    return Vector3(0.0f, 0.0f, 0.0f); // 見つからなかった場合のデフォルト値
 }
