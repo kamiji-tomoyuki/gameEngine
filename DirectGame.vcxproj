@@ -114,6 +114,7 @@ copy "$(WindowsSdkDIr)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="engine\3d\model\animation\Bone.cpp" />
     <ClCompile Include="engine\3d\model\animation\Animator.cpp" />
     <ClCompile Include="application\Base\BaseObject.cpp" />
+    <ClCompile Include="engine\utility\json\jsonLoader.cpp" />
     <ClCompile Include="math\random.cpp" />
     <ClCompile Include="engine\3d\camera\DebugCamera.cpp" />
     <ClCompile Include="engine\3d\light\LightGroup.cpp" />
@@ -202,6 +203,7 @@ copy "$(WindowsSdkDIr)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="engine\3d\model\animation\Bone.h" />
     <ClInclude Include="engine\3d\model\animation\Animator.h" />
     <ClInclude Include="application\Base\BaseObject.h" />
+    <ClInclude Include="engine\utility\json\jsonLoader.h" />
     <ClInclude Include="math\random.h" />
     <ClInclude Include="engine\3d\camera\DebugCamera.h" />
     <ClInclude Include="engine\3d\light\LightGroup.h" />

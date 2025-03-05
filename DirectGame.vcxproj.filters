@@ -129,6 +129,9 @@
     <Filter Include="リソース ファイル\OffScreen">
       <UniqueIdentifier>{9ad29c48-6718-4748-b2ff-1126d4c8443b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソースファイル\myEngine\utility\json">
+      <UniqueIdentifier>{e051b6eb-d8df-46d7-8d4f-3d12ee53aea3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="externals\imgui\imgui.cpp">
@@ -318,10 +321,13 @@
       <Filter>ソースファイル\myEngine\3d\model\animation</Filter>
     </ClCompile>
     <ClCompile Include="engine\utility\graphics\AnimationManager.cpp">
-      <Filter>ソースファイル</Filter>
+      <Filter>ソースファイル\myEngine\3d\model\animation</Filter>
     </ClCompile>
     <ClCompile Include="engine\3d\model\animation\ModelAnimation.cpp">
-      <Filter>ソースファイル</Filter>
+      <Filter>ソースファイル\myEngine\3d\model\animation</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\utility\json\jsonLoader.cpp">
+      <Filter>ソースファイル\myEngine\utility\json</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -550,8 +556,15 @@
     <ClInclude Include="engine\3d\model\animation\Skin.h">
       <Filter>ソースファイル\myEngine\3d\model\animation</Filter>
     </ClInclude>
-    <ClInclude Include="engine\utility\graphics\AnimationManager.h" />
-    <ClInclude Include="engine\3d\model\animation\ModelAnimation.h" />
+    <ClInclude Include="engine\utility\json\jsonLoader.h">
+      <Filter>ソースファイル\myEngine\utility\json</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\utility\graphics\AnimationManager.h">
+      <Filter>ソースファイル\myEngine\3d\model\animation</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\3d\model\animation\ModelAnimation.h">
+      <Filter>ソースファイル\myEngine\3d\model\animation</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\shaders\Particle\Particle.PS.hlsl">
@@ -605,7 +618,9 @@
     <FxCompile Include="resources\shaders\OffScreen\Vignette.PS.hlsl">
       <Filter>リソース ファイル\OffScreen</Filter>
     </FxCompile>
-    <FxCompile Include="resources\shaders\OffScreen\RadialBlur.PS.hlsl" />
+    <FxCompile Include="resources\shaders\OffScreen\RadialBlur.PS.hlsl">
+      <Filter>リソース ファイル\OffScreen</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">
