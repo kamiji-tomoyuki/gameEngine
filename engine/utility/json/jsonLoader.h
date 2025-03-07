@@ -72,7 +72,7 @@ public:
     Vector3 GetWorldTransform(const std::string& filePath, const std::string& targetName) const;
 
     /// <summary>
-    /// 指定したオブジェクトからランダムにワールド座標を取得
+    /// 指定したオブジェクト名からランダムにワールド座標を取得
     /// </summary>
     /// <param name="filePath">: JSONファイルのパス</param>
     /// <param name="targetName">: 取得するオブジェクトの名前</param>
