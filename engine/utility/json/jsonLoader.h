@@ -1,4 +1,5 @@
 #pragma once
+#include <random>
 #include <string>
 #include <vector>
 #include <json.hpp>
@@ -69,6 +70,14 @@ public:
     /// <param name="targetName">: 取得するオブジェクトの名前</param>
     /// <returns>ワールド座標 (x, y, z) のリスト</returns>
     Vector3 GetWorldTransform(const std::string& filePath, const std::string& targetName) const;
+
+    /// <summary>
+    /// 指定したオブジェクトからランダムにワールド座標を取得
+    /// </summary>
+    /// <param name="filePath">: JSONファイルのパス</param>
+    /// <param name="targetName">: 取得するオブジェクトの名前</param>
+    /// <returns>ワールド座標 (x, y, z) のリスト</returns>
+    Vector3 GetWorldTransformRandom(const std::string& filePath, const std::string& targetName) const;
 
 private:
 

@@ -107,3 +107,41 @@ Vector3 JsonLoader::GetWorldTransform(const std::string& filePath, const std::st
     }
     return Vector3(0.0f, 0.0f, 0.0f); // 見つからなかった場合のデフォルト値
 }
+
+Vector3 JsonLoader::GetWorldTransformRandom(const std::string& filePath, const std::string& targetName) const
+{
+    const std::string fullPath = "resources/jsons/" + filePath;
+
+    std::ifstream file(fullPath);
+    if (!file.is_open()) {
+        return Vector3(0.0f, 0.0f, 0.0f);
+    }
+    nlohmann::json jsonData;
+    try {
+        file >> jsonData;
+    }
+    catch (const std::exception&) {
+        return Vector3(0.0f, 0.0f, 0.0f);
+    }
+    if (!jsonData.contains("objects") || !jsonData["objects"].is_array()) {
+        return Vector3(0.0f, 0.0f, 0.0f);
+    }
+    std::vector<Vector3> positions;
+    for (const auto& obj : jsonData["objects"]) {
+        if (obj.contains("name") && obj["name"].get<std::string>().find(targetName) != std::string::npos) {
+            if (obj.contains("transform") && obj["transform"].contains("translation")) {
+                std::vector<float> pos = obj["transform"]["translation"];
+                if (pos.size() == 3) {
+                    positions.emplace_back(pos[0], pos[1], pos[2]);
+                }
+            }
+        }
+    }
+    if (positions.empty()) {
+        return Vector3(0.0f, 0.0f, 0.0f);
+    }
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<size_t> dist(0, positions.size() - 1);
+    return positions[dist(gen)];
+}

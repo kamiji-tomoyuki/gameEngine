@@ -45,7 +45,7 @@ void TitleScene::Initialize()
 	std::string targetName = "ICO球";
 
 	if (json_->GetName(filePath, targetName)) {
-		Vector3 position = json_->GetWorldTransform(filePath, targetName);
+		Vector3 position = json_->GetWorldTransformRandom(filePath, targetName);
 		wt1_.translation_ = position;
 	}
 }

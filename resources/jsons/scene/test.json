@@ -70,7 +70,7 @@
             "name": "ICO球",
             "transform": {
                 "translation": [
-                    0.0,
+                    3.0,
                     0.0,
                     0.0
                 ],
@@ -86,6 +86,27 @@
                 ]
             },
             "file_name": "ico_ball"
+        },
+        {
+            "type": "MESH",
+            "name": "ICO球.001",
+            "transform": {
+                "translation": [
+                    -3.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
         }
     ]
 }
