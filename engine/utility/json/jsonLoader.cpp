@@ -83,7 +83,7 @@ Vector3 JsonLoader::GetWorldTransform(const std::string& filePath, const std::st
 
     std::ifstream file(fullPath);
     if (!file.is_open()) {
-        return Vector3(0.0f, 0.0f, 0.0f); // デフォルト値を返す
+        return Vector3(0.0f, 0.0f, 0.0f);
     }
     nlohmann::json jsonData;
     try {
@@ -105,7 +105,7 @@ Vector3 JsonLoader::GetWorldTransform(const std::string& filePath, const std::st
             }
         }
     }
-    return Vector3(0.0f, 0.0f, 0.0f); // 見つからなかった場合のデフォルト値
+    return Vector3(0.0f, 0.0f, 0.0f);
 }
 
 Vector3 JsonLoader::GetWorldTransformRandom(const std::string& filePath, const std::string& targetName) const
