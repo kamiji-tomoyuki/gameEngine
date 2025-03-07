@@ -107,6 +107,69 @@
                     1.0
                 ]
             }
+        },
+        {
+            "type": "MESH",
+            "name": "ICO球.002",
+            "transform": {
+                "translation": [
+                    2.0,
+                    1.5,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "type": "MESH",
+            "name": "ICO球.003",
+            "transform": {
+                "translation": [
+                    -2.0,
+                    1.5,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "type": "MESH",
+            "name": "ICO球.004",
+            "transform": {
+                "translation": [
+                    0.0,
+                    2.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
         }
     ]
 }
