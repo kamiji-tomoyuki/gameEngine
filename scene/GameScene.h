@@ -1,12 +1,13 @@
 #pragma once
 #include "Audio.h"
 #include "BaseScene.h"
+#include "DebugCamera.h"
 #include "Input.h"
 #include "Object3dCommon.h"
-#include "SpriteCommon.h"
+#include "OffScreen.h"
 #include "ParticleCommon.h"
-#include"ViewProjection.h"
-#include"DebugCamera.h"
+#include "SpriteCommon.h"
+#include "ViewProjection.h"
 
 class GameScene : public BaseScene
 {
