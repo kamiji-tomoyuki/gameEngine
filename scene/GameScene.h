@@ -4,7 +4,6 @@
 #include "DebugCamera.h"
 #include "Input.h"
 #include "Object3dCommon.h"
-#include "OffScreen.h"
 #include "ParticleCommon.h"
 #include "SpriteCommon.h"
 #include "ViewProjection.h"
