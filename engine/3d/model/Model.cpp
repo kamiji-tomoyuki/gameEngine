@@ -36,27 +36,30 @@ void Model::Initialize(ModelCommon* modelCommon, const std::string& directorypat
 
 void Model::Draw()
 {
-	D3D12_VERTEX_BUFFER_VIEW vbvs[2] = {
-	vertexBufferView,
-	skin_->GetSkinCluster().influenceBufferView
-	};
+	D3D12_VERTEX_BUFFER_VIEW vbvs[2] = { vertexBufferView, {} };
+
+	if (skin_) {
+		vbvs[1] = skin_->GetSkinCluster().influenceBufferView;
+	}
 
 	if (!animator_->HaveAnimation()) {
-		// アニメーションあり
+		// アニメーションなし
 		modelCommon_->GetDxCommon()->GetCommandList()->IASetVertexBuffers(0, 1, vbvs);
-		modelCommon_->GetDxCommon()->GetCommandList()->IASetIndexBuffer(&indexBufferView);
-		srvManager_->SetGraphicsRootDescriptorTable(2, modelData.material.textureIndex);
 	}
 	else {
-		// アニメーションなし
-		modelCommon_->GetDxCommon()->GetCommandList()->IASetVertexBuffers(0, 2, vbvs);
-		modelCommon_->GetDxCommon()->GetCommandList()->IASetIndexBuffer(&indexBufferView);
-		srvManager_->SetGraphicsRootDescriptorTable(2, modelData.material.textureIndex);
-		srvManager_->SetGraphicsRootDescriptorTable(6, skin_->GetSrvIndex());
+		// アニメーションあり
+		modelCommon_->GetDxCommon()->GetCommandList()->IASetVertexBuffers(0, skin_ ? 2 : 1, vbvs);
+		if (skin_) {
+			srvManager_->SetGraphicsRootDescriptorTable(6, skin_->GetSrvIndex());
+		}
 	}
 
+	modelCommon_->GetDxCommon()->GetCommandList()->IASetIndexBuffer(&indexBufferView);
+	srvManager_->SetGraphicsRootDescriptorTable(2, modelData.material.textureIndex);
+
 	// --- 描画 ---
-	modelCommon_->GetDxCommon()->GetCommandList()->DrawIndexedInstanced(UINT(modelData.indices.size()), 1, 0, 0, 0);
+	modelCommon_->GetDxCommon()->GetCommandList()->DrawIndexedInstanced(
+		UINT(modelData.indices.size()), 1, 0, 0, 0);
 }
 
 void Model::CreateVartexData()
@@ -185,10 +188,9 @@ ModelData Model::LoadModelFile(const std::string& directoryPath, const std::stri
 				jointWeightData.vertexWeights.push_back({
 					bone->mWeights[weightIndex].mWeight,
 					bone->mWeights[weightIndex].mVertexId
-					});
+				});
 			}
 		}
-
 	}
 	// クリア
 	jointNames.clear();
