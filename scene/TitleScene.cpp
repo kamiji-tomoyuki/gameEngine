@@ -34,6 +34,7 @@ void TitleScene::Initialize()
 	sphere_ = std::make_unique<Object3d>();
 	sphere_->Initialize("walk.gltf");
 	sphere_->SetAnimation("sneakWalk.gltf");
+	sphere_->SetColor({ 1.0f,0.0f,0.0f,1.0f });
 
 	obb = std::make_unique<Object3d>();
 	obb->Initialize("walk.gltf");

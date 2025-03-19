@@ -74,6 +74,7 @@ public:
 	void SetPosition(const Vector3& position) { this->position = position; }
 	void SetRotation(const Vector3& rotation) { this->rotation = rotation; }
 	void SetSize(const Vector3& size) { this->size = size; }
+	void SetColor(const Vector4& color) { materialData->color = color; }
 	void SetModel(const std::string& filePath);
 	
 	/// <summary>
