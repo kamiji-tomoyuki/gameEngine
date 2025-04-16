@@ -5,6 +5,7 @@
 #include "Input.h"
 #include "Object3d.h"
 #include "Object3dCommon.h"
+#include "OffScreen.h"
 #include "ParticleCommon.h"
 #include "ParticleEmitter.h"
 #include "SpriteCommon.h"
@@ -71,6 +72,8 @@ private:
 	std::unique_ptr<ParticleEmitter> emitter_;
 
 	std::unique_ptr<JsonLoader> json_;
+
+	std::unique_ptr<OffScreen> offSc_;
 
 	bool roop = true;
 };

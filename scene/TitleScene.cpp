@@ -47,6 +47,9 @@ void TitleScene::Initialize()
 
 	Vector3 position = json_->GetWorldTransformRandom(filePath, targetName);
 	wt1_.translation_ = position;
+
+	offSc_ = std::make_unique<OffScreen>();
+	offSc_->Initialize();
 }
 
 void TitleScene::Finalize()
@@ -140,6 +143,7 @@ void TitleScene::DrawForOffScreen()
 	//------Particleの描画開始-------
 
 	//-----------------------------
+
 
 
 	/// ----------------------------------
