@@ -1,16 +1,11 @@
 #include "GameScene.h"
+#include "SceneManager.h"
+
 #include <LightGroup.h>
-#include"SceneManager.h"
 #include <line/DrawLine3D.h>
-
-void GameScene::Finalize()
-{
-
-}
 
 void GameScene::Initialize()
 {
-
 	audio_ = Audio::GetInstance();
 	objCommon_ = Object3dCommon::GetInstance();
 	spCommon_ = SpriteCommon::GetInstance();
@@ -19,6 +14,11 @@ void GameScene::Initialize()
 
 	debugCamera_ = std::make_unique<DebugCamera>();
 	debugCamera_->Initialize(&vp_);
+}
+
+void GameScene::Finalize()
+{
+
 }
 
 void GameScene::Update()

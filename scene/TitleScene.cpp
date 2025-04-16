@@ -1,13 +1,14 @@
 #include "TitleScene.h"
 #include "ImGuiManager.h"
-#include"SceneManager.h"
-#include"SrvManager.h"
+#include "SceneManager.h"
+#include "SrvManager.h"
 
 #ifdef _DEBUG
-#include<imgui.h>
+#include <imgui.h>
 #endif // _DEBUG
+
 #include <LightGroup.h>
-#include"line/DrawLine3D.h"
+#include <line/DrawLine3D.h>
 
 void TitleScene::Initialize()
 {
@@ -44,10 +45,11 @@ void TitleScene::Initialize()
 	std::string filePath = "scene/test.json";
 	std::string targetName = "ICO球";
 
-	if (json_->GetName(filePath, targetName)) {
-		Vector3 position = json_->GetWorldTransformRandom(filePath, targetName);
-		wt1_.translation_ = position;
-	}
+	Vector3 position = json_->GetWorldTransformRandom(filePath, targetName);
+	wt1_.translation_ = position;
+
+	offSc_ = std::make_unique<OffScreen>();
+	offSc_->Initialize();
 }
 
 void TitleScene::Finalize()
@@ -141,6 +143,7 @@ void TitleScene::DrawForOffScreen()
 	//------Particleの描画開始-------
 
 	//-----------------------------
+
 
 
 	/// ----------------------------------
