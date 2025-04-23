@@ -48,6 +48,7 @@ public:
 	/// 各ステータス取得関数
 	/// <returns></returns>
 	ModelData GetModelData() { return modelData; }
+	bool CheckBone() const { return hasBone_; }
 
 	/// 各ステータス設定関数
 	/// <returns></returns>
@@ -116,6 +117,8 @@ private:
 	Animator* animator_;
 	Skin* skin_;
 	Bone* bone_;
+
+	bool hasBone_ = false;
 
 	static std::unordered_set<std::string> jointNames;
 };

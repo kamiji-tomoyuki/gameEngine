@@ -26,6 +26,19 @@ void Model::Initialize(ModelCommon* modelCommon, const std::string& directorypat
 	CreateVartexData();
 	CreateIndexResource();
 
+	// --- スキニングアニメーションか判別 ---
+	Assimp::Importer importer;
+	const aiScene* scene = importer.ReadFile(directorypath_ + filename_, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices);
+
+	hasBone_ = false;
+
+	for (unsigned int i = 0; i < scene->mNumMeshes; ++i) {
+		if (scene->mMeshes[i]->HasBones()) {
+			hasBone_ = true;
+			break;
+		}
+	}
+
 	// --- .objの参照しているテクスチャファイル読み込み ---
 	TextureManager::GetInstance()->LoadTexture(modelData.material.textureFilePath);
 	// 単位行列を書き込んでおく
@@ -41,14 +54,14 @@ void Model::Draw()
 	skin_->GetSkinCluster().influenceBufferView
 	};
 
-	if (!animator_->HaveAnimation()) {
-		// アニメーションあり
+	if (!animator_->HaveAnimation() || !CheckBone()) {
+		// アニメーションなし
 		modelCommon_->GetDxCommon()->GetCommandList()->IASetVertexBuffers(0, 1, vbvs);
 		modelCommon_->GetDxCommon()->GetCommandList()->IASetIndexBuffer(&indexBufferView);
 		srvManager_->SetGraphicsRootDescriptorTable(2, modelData.material.textureIndex);
 	}
 	else {
-		// アニメーションなし
+		// アニメーションあり
 		modelCommon_->GetDxCommon()->GetCommandList()->IASetVertexBuffers(0, 2, vbvs);
 		modelCommon_->GetDxCommon()->GetCommandList()->IASetIndexBuffer(&indexBufferView);
 		srvManager_->SetGraphicsRootDescriptorTable(2, modelData.material.textureIndex);

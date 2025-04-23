@@ -24,6 +24,8 @@ void Object3d::Initialize(const std::string& filePath)
 	modelAnimation_->SetModelData(model->GetModelData());
 	modelAnimation_->Initialize("resources/models/", filePath);
 
+	hasBone_ = model->CheckBone();
+
 	model->SetAnimator(modelAnimation_->GetAnimator());
 	model->SetBone(modelAnimation_->GetBone());
 	model->SetSkin(modelAnimation_->GetSkin());
@@ -77,11 +79,11 @@ void Object3d::Draw(const WorldTransform& worldTransform, const ViewProjection& 
 
 	obj3dCommon->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
 	obj3dCommon->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(1, transformationMatrixResource->GetGPUVirtualAddress());
-	
+
 	if (materialData->enableLighting != 0 && lightGroup) {
 		lightGroup->Draw();
 	}
-	
+
 	if (model) {
 		model->Draw();
 	}
@@ -90,7 +92,7 @@ void Object3d::Draw(const WorldTransform& worldTransform, const ViewProjection& 
 void Object3d::DrawSkeleton(const WorldTransform& worldTransform, const ViewProjection& viewProjection)
 {
 	Update(worldTransform, viewProjection);
-	
+
 	const Skeleton& skeleton = modelAnimation_->GetSkeletonData();
 
 	for (const auto& joint : skeleton.joints) {
@@ -124,7 +126,7 @@ void Object3d::CreateTransformationMatrix()
 {
 	transformationMatrixResource = obj3dCommon->GetDxCommon()->CreateBufferResource(sizeof(TransformationMatrix));
 	transformationMatrixResource->Map(0, nullptr, reinterpret_cast<void**>(&transformationMatrixData));
-	
+
 	transformationMatrixData->WVP = MakeIdentity4x4();
 	transformationMatrixData->World = MakeIdentity4x4();
 	transformationMatrixData->WorldInverseTranspose = MakeIdentity4x4();
@@ -134,7 +136,7 @@ void Object3d::CreateMaterial()
 {
 	materialResource = obj3dCommon->GetDxCommon()->CreateBufferResource(sizeof(Material));
 	materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
-	
+
 	materialData->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 	materialData->enableLighting = true;
 	materialData->uvTransform = MakeIdentity4x4();

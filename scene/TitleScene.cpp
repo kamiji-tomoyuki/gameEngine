@@ -30,13 +30,10 @@ void TitleScene::Initialize()
 	wt2_.translation_ = { 2.0f,0.0f,0.0f };
 
 	walk_ = std::make_unique<Object3d>();
-	walk_->Initialize("walk.gltf");
-	sphere_ = std::make_unique<Object3d>();
-	sphere_->Initialize("walk.gltf");
-	sphere_->SetAnimation("sneakWalk.gltf");
-
-	obb = std::make_unique<Object3d>();
-	obb->Initialize("walk.gltf");
+	walk_->Initialize("AnimatedCube.gltf");
+	sneak_ = std::make_unique<Object3d>();
+	sneak_->Initialize("walk.gltf");
+	sneak_->SetAnimation("sneakWalk.gltf");
 
 	emitter_ = std::make_unique<ParticleEmitter>();
 	emitter_->Initialize("test", "debug/plane.obj");
@@ -45,8 +42,8 @@ void TitleScene::Initialize()
 	std::string filePath = "scene/test.json";
 	std::string targetName = "ICO球";
 
-	Vector3 position = json_->GetWorldTransformRandom(filePath, targetName);
-	wt1_.translation_ = position;
+	Vector3 position = json_->GetWorldTransform(filePath, targetName);
+	wt2_.translation_ = position;
 }
 
 void TitleScene::Finalize()
@@ -69,7 +66,7 @@ void TitleScene::Update()
 
 	emitter_->Update(vp_);
 	walk_->AnimationUpdate(roop);
-	sphere_->AnimationUpdate(roop);
+	sneak_->AnimationUpdate(roop);
 
 	wt1_.UpdateMatrix();
 	wt2_.UpdateMatrix();
@@ -89,15 +86,13 @@ void TitleScene::Draw()
 
 	objCommon_->skinningDrawCommonSetting();
 	//-----アニメーションの描画開始-----
-	walk_->Draw(wt1_, vp_);
-	walk_->DrawSkeleton(wt1_, vp_);
-	sphere_->Draw(wt2_, vp_);
-	sphere_->DrawSkeleton(wt2_, vp_);
+	sneak_->Draw(wt2_, vp_);
+	sneak_->DrawSkeleton(wt2_, vp_);
 	//------------------------------
 
 	objCommon_->DrawCommonSetting();
 	//-----3DObjectの描画開始-----
-	//sphere_->Draw(wt2_, vp_);
+	walk_->Draw(wt1_, vp_);
 	//--------------------------
 
 	/// Particleの描画準備
