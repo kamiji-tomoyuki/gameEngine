@@ -130,6 +130,22 @@ void ParticleManager::Draw()
 	}
 }
 
+void ParticleManager::DrawRing()
+{
+	particleCommon->GetDxCommon()->GetCommandList()->IASetVertexBuffers(0, 1, &ringVertexBufferView);
+
+	for (auto& [groupName, particleGroup] : particleGroups) {
+		if (particleGroup.instanceCount > 0) {
+			particleCommon->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
+
+			srvManager_->SetGraphicsRootDescriptorTable(1, particleGroup.instancingSRVIndex);
+			srvManager_->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetTextureIndexByFilePath(particleGroup.material.textureFilePath));
+
+			particleCommon->GetDxCommon()->GetCommandList()->DrawInstanced(UINT(ringModelData.vertices.size()), particleGroup.instanceCount, 0, 0);
+		}
+	}
+}
+
 void ParticleManager::CreateParticleGroup(const std::string name, const std::string& filename)
 {
 	// --- パーティクルグループ生成 ---
@@ -158,16 +174,55 @@ void ParticleManager::CreateVartexData(const std::string& filename)
 {
 	modelData = LoadObjFile("resources/models/", filename);
 
+	ringModelData.material.textureFilePath = "resources/images/gradationLine.png";
+	CreateRingVartexData();
+
 	// --- 頂点リソース生成 ---
 	vertexResource = particleCommon->GetDxCommon()->CreateBufferResource(sizeof(VertexData) * modelData.vertices.size());
+	
+	ringVertexResource = particleCommon->GetDxCommon()->CreateBufferResource(sizeof(VertexData) * ringModelData.vertices.size());
+	
 	// --- 頂点バッファビュー生成 ---
 	vertexBufferView.BufferLocation = vertexResource->GetGPUVirtualAddress();
 	vertexBufferView.SizeInBytes = UINT(sizeof(VertexData) * modelData.vertices.size());
 	vertexBufferView.StrideInBytes = sizeof(VertexData);
 
+	ringVertexBufferView.BufferLocation = ringVertexResource->GetGPUVirtualAddress();
+	ringVertexBufferView.SizeInBytes = UINT(sizeof(VertexData) * ringModelData.vertices.size());
+	ringVertexBufferView.StrideInBytes = sizeof(VertexData);
+
 	// --- 書き込み ---
 	vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
 	std::memcpy(vertexData, modelData.vertices.data(), sizeof(VertexData) * modelData.vertices.size());
+
+	ringVertexResource->Map(0, nullptr, reinterpret_cast<void**>(&ringVertexData));
+	std::memcpy(ringVertexData, ringModelData.vertices.data(), sizeof(VertexData) * ringModelData.vertices.size());
+
+}
+
+void ParticleManager::CreateRingVartexData()
+{
+	for (uint32_t index = 0; index < kRingDivide; ++index) {
+		float sin = std::sin(index * radianPerDivide);
+		float cos = std::cos(index * radianPerDivide);
+		float sinNext = std::sin((index + 1) * radianPerDivide);
+		float cosNext = std::cos((index + 1) * radianPerDivide);
+		float u = float(index) / float(kRingDivide);
+		float uNext = float(index + 1) / float(kRingDivide);
+
+		Vector4 outerCurr = { -sin * kOuterRadius, cos * kOuterRadius, 0.0f, 1.0f };
+		Vector4 outerNext = { -sinNext * kOuterRadius, cosNext * kOuterRadius, 0.0f, 1.0f };
+		Vector4 innerCurr = { -sin * kInnerRadius, cos * kInnerRadius, 0.0f, 1.0f };
+		Vector4 innerNext = { -sinNext * kInnerRadius, cosNext * kInnerRadius, 0.0f, 1.0f };
+
+		ringModelData.vertices.push_back({ outerCurr, {u, 0.0f} });
+		ringModelData.vertices.push_back({ outerNext, {uNext, 0.0f} });
+		ringModelData.vertices.push_back({ innerCurr, {u, 1.0f} });
+
+		ringModelData.vertices.push_back({ innerCurr, {u, 1.0f} });
+		ringModelData.vertices.push_back({ outerNext, {uNext, 0.0f} });
+		ringModelData.vertices.push_back({ innerNext, {uNext, 1.0f} });
+	}
 }
 
 ParticleManager::Particle ParticleManager::MakeNewParticle(

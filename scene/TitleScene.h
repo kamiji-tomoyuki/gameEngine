@@ -65,9 +65,7 @@ private:
 	WorldTransform wt2_;
 
 	std::unique_ptr<Object3d> walk_;
-	std::unique_ptr<Object3d> sphere_;
-
-	std::unique_ptr<Object3d> obb;
+	std::unique_ptr<Object3d> sneak_;
 
 	std::unique_ptr<ParticleEmitter> emitter_;
 

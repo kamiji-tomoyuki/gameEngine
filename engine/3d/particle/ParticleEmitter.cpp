@@ -75,6 +75,17 @@ void ParticleEmitter::Draw()
 	manager_->Draw();
 }
 
+void ParticleEmitter::DrawRing()
+{
+	manager_->SetRandomRotate(isRandomRotate);
+	manager_->SetAcceMultipy(isAcceMultiply);
+	manager_->SetBillBorad(isBillBoard);
+	manager_->SetRandomSize(isRandomScale);
+	manager_->SetAllRandomSize(isAllRamdomScale);
+	manager_->SetSinMove(isSinMove);
+	manager_->DrawRing();
+}
+
 void ParticleEmitter::DrawEmitter()
 {
 	if (!isVisible) return;

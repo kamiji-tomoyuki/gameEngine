@@ -30,6 +30,7 @@ public:
     /// 描画処理
     /// </summary>
     void Draw();
+    void DrawRing();
 
     /// <summary>
     /// エミッター描画処理

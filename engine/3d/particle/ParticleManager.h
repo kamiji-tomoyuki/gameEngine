@@ -29,6 +29,7 @@ public:
 	/// 描画処理
 	/// </summary>
 	void Draw();
+	void DrawRing();
 
 	/// <summary>
 	/// パーティクルグループ生成
@@ -54,6 +55,11 @@ private:
 	/// 頂点データ作成
 	/// </summary>
 	void CreateVartexData(const std::string& filename);
+
+	/// <summary>
+	/// 円状頂点データ作成
+	/// </summary>
+	void CreateRingVartexData();
 
 private:
 
@@ -106,6 +112,16 @@ private:
 	VertexData* vertexData = nullptr;
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView;
 
+	// 円形データ
+	Microsoft::WRL::ComPtr<ID3D12Resource> ringVertexResource = nullptr;
+	VertexData* ringVertexData = nullptr;
+	D3D12_VERTEX_BUFFER_VIEW ringVertexBufferView;
+	const uint32_t kRingDivide = 32;
+	const float kOuterRadius = 1.0f;
+	const float kInnerRadius = 0.2f;
+	const float radianPerDivide = 2.0f * std::numbers::pi_v<float> / float(kRingDivide);
+
+	
 	// --- マテリアルデータ ---
 	struct Material {
 		Vector4 color;
@@ -125,7 +141,10 @@ private:
 	static std::unordered_map<std::string, ModelData> modelCache;
 	std::unordered_map<std::string, ParticleGroup>particleGroups;
 
-	// デルタタイム
+	// 円形データ
+	ModelData ringModelData;
+
+	// --- デルタタイム ---
 	const float kDeltaTime = 1.0f / 60.0f;
 	static const uint32_t kNumMaxInstance = 10000;
 
