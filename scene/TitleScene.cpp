@@ -36,7 +36,7 @@ void TitleScene::Initialize()
 	sneak_->SetAnimation("sneakWalk.gltf");
 
 	emitter_ = std::make_unique<ParticleEmitter>();
-	emitter_->Initialize("test", "debug/plane.obj");
+	emitter_->Initialize("test", "debug/ringPlane.obj");
 
 	json_ = std::make_unique<JsonLoader>();
 	std::string filePath = "scene/test.json";
@@ -99,7 +99,7 @@ void TitleScene::Draw()
 	/// Particleの描画準備
 	ptCommon_->DrawCommonSetting();
 	//------Particleの描画開始-------
-	emitter_->Draw();
+	emitter_->DrawRing();
 	//-----------------------------
 
 	//-----線描画-----
