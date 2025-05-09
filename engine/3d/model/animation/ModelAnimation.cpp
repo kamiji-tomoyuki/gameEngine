@@ -25,5 +25,11 @@ void ModelAnimation::Update(bool roop)
 		animator_->Update(roop);
 		bone_->Update(animator_->GetAnimation(), animator_->GetAnimationTime());
 		skin_->Update(bone_->GetSkeleton());
+
+		if (HaveBone_) {
+			animator_->SetModelData(modelData_);
+			animator_->UpdateNodeAnimation(roop);
+			localMatrix_ = animator_->GetLocalMatrix();
+		}
 	}
 }

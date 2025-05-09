@@ -65,6 +65,7 @@ void TitleScene::Update()
 	ChangeScene();
 
 	emitter_->Update(vp_);
+	walk_->Update(wt1_, vp_);
 	walk_->AnimationUpdate(roop);
 	sneak_->AnimationUpdate(roop);
 

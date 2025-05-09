@@ -106,6 +106,7 @@ private:
 		Matrix4x4 World;
 		Matrix4x4 WorldInverseTranspose;
 	};
+	Matrix4x4 worldViewProjectionMatrix_;
 	Microsoft::WRL::ComPtr<ID3D12Resource> transformationMatrixResource;
 	TransformationMatrix* transformationMatrixData = nullptr;
 

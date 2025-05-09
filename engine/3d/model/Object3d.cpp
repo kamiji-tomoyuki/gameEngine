@@ -25,6 +25,7 @@ void Object3d::Initialize(const std::string& filePath)
 	modelAnimation_->Initialize("resources/models/", filePath);
 
 	hasBone_ = model->CheckBone();
+	modelAnimation_->SetHaveBone(hasBone_);
 
 	model->SetAnimator(modelAnimation_->GetAnimator());
 	model->SetBone(modelAnimation_->GetBone());
@@ -41,14 +42,21 @@ void Object3d::Update(const WorldTransform& worldTransform, const ViewProjection
 	if (worldTransform.parent_) {
 		worldMatrix *= worldTransform.parent_->matWorld_;
 	}
-	Matrix4x4 worldViewProjectionMatrix;
 	const Matrix4x4& viewProjectionMatrix = viewProjection.matView_ * viewProjection.matProjection_;
-	worldViewProjectionMatrix = worldMatrix * viewProjectionMatrix;
+	worldViewProjectionMatrix_ = worldMatrix * viewProjectionMatrix;
 
 	Matrix4x4 worldInverseMatrix = Inverse(worldMatrix);
-	transformationMatrixData->WVP = worldViewProjectionMatrix;
-	transformationMatrixData->World = worldTransform.matWorld_;
-	transformationMatrixData->WorldInverseTranspose = Transpose(worldInverseMatrix);
+
+	if (!modelAnimation_) {
+		transformationMatrixData->WVP = worldViewProjectionMatrix_;
+		transformationMatrixData->World = worldTransform.matWorld_;
+		transformationMatrixData->WorldInverseTranspose = Transpose(worldInverseMatrix);
+	}
+	else {
+		transformationMatrixData->WVP = modelAnimation_->GetLocalMatrix() * worldViewProjectionMatrix_;
+		transformationMatrixData->World = modelAnimation_->GetLocalMatrix() * worldTransform.matWorld_;
+		transformationMatrixData->WorldInverseTranspose = Transpose(worldInverseMatrix);
+	}
 }
 
 void Object3d::AnimationUpdate(bool roop)
