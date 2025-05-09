@@ -42,7 +42,7 @@ void TitleScene::Initialize()
 	std::string filePath = "scene/test.json";
 	std::string targetName = "ICO球";
 
-	Vector3 position = json_->GetWorldTransform(filePath, targetName);
+  Vector3 position = json_->GetWorldTransform(filePath, targetName);
 	wt2_.translation_ = position;
 }
 
@@ -136,6 +136,7 @@ void TitleScene::DrawForOffScreen()
 	//------Particleの描画開始-------
 
 	//-----------------------------
+
 
 
 	/// ----------------------------------
