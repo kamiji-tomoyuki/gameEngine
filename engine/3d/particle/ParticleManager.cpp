@@ -146,6 +146,22 @@ void ParticleManager::DrawRing()
 	}
 }
 
+void ParticleManager::DrawCylinder()
+{
+	particleCommon->GetDxCommon()->GetCommandList()->IASetVertexBuffers(0, 1, &cylinderVertexBufferView);
+
+	for (auto& [groupName, particleGroup] : particleGroups) {
+		if (particleGroup.instanceCount > 0) {
+			particleCommon->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
+
+			srvManager_->SetGraphicsRootDescriptorTable(1, particleGroup.instancingSRVIndex);
+			srvManager_->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetTextureIndexByFilePath(particleGroup.material.textureFilePath));
+
+			particleCommon->GetDxCommon()->GetCommandList()->DrawInstanced(UINT(cylinderModelData.vertices.size()), particleGroup.instanceCount, 0, 0);
+		}
+	}
+}
+
 void ParticleManager::CreateParticleGroup(const std::string name, const std::string& filename)
 {
 	// --- パーティクルグループ生成 ---
@@ -177,11 +193,16 @@ void ParticleManager::CreateVartexData(const std::string& filename)
 	ringModelData.material.textureFilePath = "resources/images/gradationLine.png";
 	CreateRingVartexData();
 
+	cylinderModelData.material.textureFilePath = "resources/images/gradationLine.png";
+	CreateCylinderVartexData();
+
 	// --- 頂点リソース生成 ---
 	vertexResource = particleCommon->GetDxCommon()->CreateBufferResource(sizeof(VertexData) * modelData.vertices.size());
 	
 	ringVertexResource = particleCommon->GetDxCommon()->CreateBufferResource(sizeof(VertexData) * ringModelData.vertices.size());
 	
+	cylinderVertexResource = particleCommon->GetDxCommon()->CreateBufferResource(sizeof(VertexData) * cylinderModelData.vertices.size());
+
 	// --- 頂点バッファビュー生成 ---
 	vertexBufferView.BufferLocation = vertexResource->GetGPUVirtualAddress();
 	vertexBufferView.SizeInBytes = UINT(sizeof(VertexData) * modelData.vertices.size());
@@ -191,6 +212,10 @@ void ParticleManager::CreateVartexData(const std::string& filename)
 	ringVertexBufferView.SizeInBytes = UINT(sizeof(VertexData) * ringModelData.vertices.size());
 	ringVertexBufferView.StrideInBytes = sizeof(VertexData);
 
+	cylinderVertexBufferView.BufferLocation = cylinderVertexResource->GetGPUVirtualAddress();
+	cylinderVertexBufferView.SizeInBytes = UINT(sizeof(VertexData) * cylinderModelData.vertices.size());
+	cylinderVertexBufferView.StrideInBytes = sizeof(VertexData);
+
 	// --- 書き込み ---
 	vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
 	std::memcpy(vertexData, modelData.vertices.data(), sizeof(VertexData) * modelData.vertices.size());
@@ -198,15 +223,18 @@ void ParticleManager::CreateVartexData(const std::string& filename)
 	ringVertexResource->Map(0, nullptr, reinterpret_cast<void**>(&ringVertexData));
 	std::memcpy(ringVertexData, ringModelData.vertices.data(), sizeof(VertexData) * ringModelData.vertices.size());
 
+	cylinderVertexResource->Map(0, nullptr, reinterpret_cast<void**>(&cylinderVertexData));
+	std::memcpy(cylinderVertexData, cylinderModelData.vertices.data(), sizeof(VertexData) * cylinderModelData.vertices.size());
+
 }
 
 void ParticleManager::CreateRingVartexData()
 {
 	for (uint32_t index = 0; index < kRingDivide; ++index) {
-		float sin = std::sin(index * radianPerDivide);
-		float cos = std::cos(index * radianPerDivide);
-		float sinNext = std::sin((index + 1) * radianPerDivide);
-		float cosNext = std::cos((index + 1) * radianPerDivide);
+		float sin = std::sin(index * ringRadianPerDivide);
+		float cos = std::cos(index * ringRadianPerDivide);
+		float sinNext = std::sin((index + 1) * ringRadianPerDivide);
+		float cosNext = std::cos((index + 1) * ringRadianPerDivide);
 		float u = float(index) / float(kRingDivide);
 		float uNext = float(index + 1) / float(kRingDivide);
 
@@ -222,6 +250,51 @@ void ParticleManager::CreateRingVartexData()
 		ringModelData.vertices.push_back({ innerCurr, {u, 1.0f} });
 		ringModelData.vertices.push_back({ outerNext, {uNext, 0.0f} });
 		ringModelData.vertices.push_back({ innerNext, {uNext, 1.0f} });
+	}
+}
+
+void ParticleManager::CreateCylinderVartexData()
+{
+	const uint32_t kHeightDivide = 8; // 縦方向の分割数（お好みで）
+	const float height = 2.0f;        // 円柱の高さ
+	const float halfHeight = height / 2.0f;
+
+	for (uint32_t h = 0; h < kHeightDivide; ++h) {
+		float y0 = -halfHeight + height * (float(h) / kHeightDivide);
+		float y1 = -halfHeight + height * (float(h + 1) / kHeightDivide);
+		float v0 = float(h) / kHeightDivide;
+		float v1 = float(h + 1) / kHeightDivide;
+
+		for (uint32_t i = 0; i < kCylinderDivide; ++i) {
+			float theta0 = i * cylinderRadianPerDivide;
+			float theta1 = (i + 1) * cylinderRadianPerDivide;
+
+			float sin0 = std::sin(theta0);
+			float cos0 = std::cos(theta0);
+			float sin1 = std::sin(theta1);
+			float cos1 = std::cos(theta1);
+
+			float x0 = cos0 * kOuterRadius;
+			float z0 = -sin0 * kOuterRadius;
+			float x1 = cos1 * kOuterRadius;
+			float z1 = -sin1 * kOuterRadius;
+
+			float u0 = float(i) / kCylinderDivide;
+			float u1 = float(i + 1) / kCylinderDivide;
+
+			Vector3 normal0 = { cos0, 0.0f, -sin0 };
+			Vector3 normal1 = { cos1, 0.0f, -sin1 };
+
+			// 1枚目の三角形
+			cylinderModelData.vertices.push_back({ {x0, y0, z0, 1.0f}, {u0, v0} });
+			cylinderModelData.vertices.push_back({ {x1, y0, z1, 1.0f}, {u1, v0} });
+			cylinderModelData.vertices.push_back({ {x0, y1, z0, 1.0f}, {u0, v1} });
+
+			// 2枚目の三角形
+			cylinderModelData.vertices.push_back({ {x0, y1, z0, 1.0f}, {u0, v1} });
+			cylinderModelData.vertices.push_back({ {x1, y0, z1, 1.0f}, {u1, v0} });
+			cylinderModelData.vertices.push_back({ {x1, y1, z1, 1.0f}, {u1, v1} });
+		}
 	}
 }
 

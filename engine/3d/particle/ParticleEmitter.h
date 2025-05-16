@@ -31,6 +31,7 @@ public:
     /// </summary>
     void Draw();
     void DrawRing();
+    void DrawCylinder();
 
     /// <summary>
     /// エミッター描画処理

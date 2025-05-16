@@ -30,6 +30,7 @@ public:
 	/// </summary>
 	void Draw();
 	void DrawRing();
+	void DrawCylinder();
 
 	/// <summary>
 	/// パーティクルグループ生成
@@ -60,6 +61,11 @@ private:
 	/// 円状頂点データ作成
 	/// </summary>
 	void CreateRingVartexData();
+
+	/// <summary>
+	/// 円柱状頂点データ作成
+	/// </summary>
+	void CreateCylinderVartexData();
 
 private:
 
@@ -119,9 +125,18 @@ private:
 	const uint32_t kRingDivide = 32;
 	const float kOuterRadius = 1.0f;
 	const float kInnerRadius = 0.2f;
-	const float radianPerDivide = 2.0f * std::numbers::pi_v<float> / float(kRingDivide);
+	const float ringRadianPerDivide = 2.0f * std::numbers::pi_v<float> / float(kRingDivide);
 
-	
+	// 円柱データ
+	Microsoft::WRL::ComPtr<ID3D12Resource> cylinderVertexResource = nullptr;
+	VertexData* cylinderVertexData = nullptr;
+	D3D12_VERTEX_BUFFER_VIEW cylinderVertexBufferView;
+	const uint32_t kCylinderDivide = 32;
+	const float kTopRadius = 1.0f;
+	const float kBottomRadius = 1.0f;
+	const float kHeight = 3.0f;
+	const float cylinderRadianPerDivide = 2.0f * std::numbers::pi_v<float> / float(kCylinderDivide);
+
 	// --- マテリアルデータ ---
 	struct Material {
 		Vector4 color;
@@ -143,6 +158,9 @@ private:
 
 	// 円形データ
 	ModelData ringModelData;
+
+	// 円柱データ
+	ModelData cylinderModelData;
 
 	// --- デルタタイム ---
 	const float kDeltaTime = 1.0f / 60.0f;
