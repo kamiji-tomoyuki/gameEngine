@@ -46,17 +46,18 @@ void ParticleManager::Update(const ViewProjection& viewProjection)
 				float waveScale = 0.5f * (sin(t * DirectX::XM_PI * 18.0f) + 1.0f);  // 0 ~ 1
 
 				// 最大スケールが寿命に応じて縮小し、最終的に0になる
-				float maxScale = (1.0f - t); 
+				float maxScale = (1.0f - t);
 
 				// Sin波スケールと最大スケールの積を適用
 				(*particleIterator).transform.scale_ =
 					(*particleIterator).startScale * waveScale * maxScale;
 
-			} else {
+			}
+			else {
 				// 通常の線形補間
 				(*particleIterator).transform.scale_ =
 					(1.0f - t) * (*particleIterator).startScale + t * (*particleIterator).endScale;
-				
+
 				// アルファ値の計算
 				(*particleIterator).color.w = (*particleIterator).initialAlpha - ((*particleIterator).currentTime / (*particleIterator).lifeTime);
 			}
@@ -65,13 +66,15 @@ void ParticleManager::Update(const ViewProjection& viewProjection)
 
 			if (isRandomRotate_) {
 				(*particleIterator).transform.rotation_ += (*particleIterator).rotateVelocity;
-			} else {
+			}
+			else {
 				(*particleIterator).transform.rotation_ = (1.0f - t) * (*particleIterator).startRote + t * (*particleIterator).endRote;
 			}
 
 			if (isAcceMultipy_) {
 				(*particleIterator).velocity *= (*particleIterator).Acce;
-			} else {
+			}
+			else {
 				(*particleIterator).velocity += (*particleIterator).Acce;
 			}
 
@@ -87,7 +90,8 @@ void ParticleManager::Update(const ViewProjection& viewProjection)
 				// ビルボード
 				worldMatrix = MakeScaleMatrix((*particleIterator).transform.scale_) * billboardMatrix *
 					MakeTranslateMatrix((*particleIterator).transform.translation_);
-			} else {
+			}
+			else {
 				// 通常
 				worldMatrix = MakeAffineMatrix((*particleIterator).transform.scale_,
 					(*particleIterator).transform.rotation_,
@@ -198,9 +202,9 @@ void ParticleManager::CreateVartexData(const std::string& filename)
 
 	// --- 頂点リソース生成 ---
 	vertexResource = particleCommon->GetDxCommon()->CreateBufferResource(sizeof(VertexData) * modelData.vertices.size());
-	
+
 	ringVertexResource = particleCommon->GetDxCommon()->CreateBufferResource(sizeof(VertexData) * ringModelData.vertices.size());
-	
+
 	cylinderVertexResource = particleCommon->GetDxCommon()->CreateBufferResource(sizeof(VertexData) * cylinderModelData.vertices.size());
 
 	// --- 頂点バッファビュー生成 ---
@@ -255,46 +259,21 @@ void ParticleManager::CreateRingVartexData()
 
 void ParticleManager::CreateCylinderVartexData()
 {
-	const uint32_t kHeightDivide = 8; // 縦方向の分割数（お好みで）
-	const float height = 2.0f;        // 円柱の高さ
-	const float halfHeight = height / 2.0f;
+	for (uint32_t i = 0; i < kCylinderDivide; ++i) {
+		float sin = std::sin(i * cylinderRadianPerDivide);
+		float cos = std::cos(i * cylinderRadianPerDivide);
+		float sinNext = std::sin((i + 1) * cylinderRadianPerDivide);
+		float cosNext = std::cos((i + 1) * cylinderRadianPerDivide);
+		float u = float(i) / kCylinderDivide;
+		float uNext = float(i + 1) / kCylinderDivide;
 
-	for (uint32_t h = 0; h < kHeightDivide; ++h) {
-		float y0 = -halfHeight + height * (float(h) / kHeightDivide);
-		float y1 = -halfHeight + height * (float(h + 1) / kHeightDivide);
-		float v0 = float(h) / kHeightDivide;
-		float v1 = float(h + 1) / kHeightDivide;
+		cylinderModelData.vertices.push_back({ {-sin * kTopRadius, kHeight, cos * kTopRadius, 1.0f}, {u, 0.0f} });
+		cylinderModelData.vertices.push_back({ {-sinNext * kTopRadius, kHeight, cosNext * kTopRadius, 1.0f}, {uNext, 0.0f} });
+		cylinderModelData.vertices.push_back({ {-sin * kBottomRadius, 0.0f, cos * kBottomRadius, 1.0f}, {u, 1.0f} });
 
-		for (uint32_t i = 0; i < kCylinderDivide; ++i) {
-			float theta0 = i * cylinderRadianPerDivide;
-			float theta1 = (i + 1) * cylinderRadianPerDivide;
-
-			float sin0 = std::sin(theta0);
-			float cos0 = std::cos(theta0);
-			float sin1 = std::sin(theta1);
-			float cos1 = std::cos(theta1);
-
-			float x0 = cos0 * kOuterRadius;
-			float z0 = -sin0 * kOuterRadius;
-			float x1 = cos1 * kOuterRadius;
-			float z1 = -sin1 * kOuterRadius;
-
-			float u0 = float(i) / kCylinderDivide;
-			float u1 = float(i + 1) / kCylinderDivide;
-
-			Vector3 normal0 = { cos0, 0.0f, -sin0 };
-			Vector3 normal1 = { cos1, 0.0f, -sin1 };
-
-			// 1枚目の三角形
-			cylinderModelData.vertices.push_back({ {x0, y0, z0, 1.0f}, {u0, v0} });
-			cylinderModelData.vertices.push_back({ {x1, y0, z1, 1.0f}, {u1, v0} });
-			cylinderModelData.vertices.push_back({ {x0, y1, z0, 1.0f}, {u0, v1} });
-
-			// 2枚目の三角形
-			cylinderModelData.vertices.push_back({ {x0, y1, z0, 1.0f}, {u0, v1} });
-			cylinderModelData.vertices.push_back({ {x1, y0, z1, 1.0f}, {u1, v0} });
-			cylinderModelData.vertices.push_back({ {x1, y1, z1, 1.0f}, {u1, v1} });
-		}
+		cylinderModelData.vertices.push_back({ {-sin * kBottomRadius, 0.0f, cos * kBottomRadius, 1.0f}, {u, 1.0f} });
+		cylinderModelData.vertices.push_back({ {-sinNext * kTopRadius, kHeight, cosNext * kTopRadius, 1.0f}, {uNext, 0.0f} });
+		cylinderModelData.vertices.push_back({ {-sinNext * kBottomRadius, 0.0f, cosNext * kBottomRadius, 1.0f}, {uNext, 1.0f} });
 	}
 }
 
@@ -349,13 +328,15 @@ ParticleManager::Particle ParticleManager::MakeNewParticle(
 		std::uniform_real_distribution<float> distScaleZ(allScaleMin.z, allScaleMax.z);
 
 		particle.startScale = { distScaleX(randomEngine),distScaleY(randomEngine),distScaleZ(randomEngine) };
-	} else if (isRandomSize_) {
+	}
+	else if (isRandomSize_) {
 		std::uniform_real_distribution<float> distScale(scaleMin, scaleMax);
 		particle.startScale.x = distScale(randomEngine);
 		particle.startScale.y = particle.startScale.x;
 		particle.startScale.z = particle.startScale.x;
 
-	} else {
+	}
+	else {
 		particle.startScale = particleStartScale;
 	}
 
@@ -393,7 +374,8 @@ ParticleManager::Particle ParticleManager::MakeNewParticle(
 		particle.transform.rotation_.x = distRotateX(randomEngine);
 		particle.transform.rotation_.y = distRotateY(randomEngine);
 		particle.transform.rotation_.z = distRotateZ(randomEngine);
-	} else {
+	}
+	else {
 		particle.startRote = startRote;
 		particle.endRote = endRote;
 	}
@@ -401,7 +383,8 @@ ParticleManager::Particle ParticleManager::MakeNewParticle(
 	if (isRamdomColor) {
 		std::uniform_real_distribution<float> distColor(0.0f, 1.0f);
 		particle.color = { distColor(randomEngine), distColor(randomEngine), distColor(randomEngine), distAlpha(randomEngine) };
-	} else {
+	}
+	else {
 		particle.color = { 1.0f,1.0f,1.0f, distAlpha(randomEngine) };
 	}
 

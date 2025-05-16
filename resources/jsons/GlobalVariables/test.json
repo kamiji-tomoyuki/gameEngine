@@ -22,7 +22,7 @@
         ],
         "Emit translation": [
             0.0,
-            -0.699999988079071,
+            0.0,
             0.0
         ],
         "Particle EndAcce": [
@@ -33,7 +33,7 @@
         "Particle EndRote": [
             0.0,
             0.0,
-            0.0
+            3.1415927410125732
         ],
         "Particle EndScale": [
             1.0,
@@ -48,7 +48,7 @@
         "Particle StartRote": [
             0.0,
             0.5724679827690125,
-            0.0
+            3.1415927410125732
         ],
         "Particle StartScale": [
             1.0,
