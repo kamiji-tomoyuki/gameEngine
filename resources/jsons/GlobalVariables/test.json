@@ -22,8 +22,8 @@
         ],
         "Emit translation": [
             0.0,
-            0.0,
-            0.0
+            0.20000000298023224,
+            -4.599999904632568
         ],
         "Particle EndAcce": [
             0.0,
@@ -47,7 +47,7 @@
         ],
         "Particle StartRote": [
             0.0,
-            0.5724679827690125,
+            0.0,
             3.1415927410125732
         ],
         "Particle StartScale": [
@@ -56,40 +56,40 @@
             1.0
         ],
         "RotationVelo Max": [
-            0.0,
-            0.0,
-            0.0
+            1.2100000381469727,
+            1.100000023841858,
+            0.5299999713897705
         ],
         "RotationVelo Min": [
-            0.0,
-            0.0,
-            0.0
+            -1.0,
+            -0.8600000143051147,
+            -0.5400000214576721
         ],
         "Scale Max": 0.0,
         "Scale Min": 0.0,
         "alphaMax": 1.0,
         "alphaMin": 1.0,
-        "count": 1,
-        "emitFrequency": 1.0,
-        "isAcceMultiply": true,
+        "count": 5,
+        "emitFrequency": 2.240000009536743,
+        "isAcceMultiply": false,
         "isAllRamdomScale": false,
-        "isBillBoard": false,
-        "isRamdomColor": false,
-        "isRandomRotate": false,
+        "isBillBoard": true,
+        "isRamdomColor": true,
+        "isRandomRotate": true,
         "isRandomScale": false,
-        "isSinMove": false,
+        "isSinMove": true,
         "isVisible": true,
-        "lifeTimeMax": 3.819999933242798,
-        "lifeTimeMin": 0.9700000286102295,
+        "lifeTimeMax": 1.4900000095367432,
+        "lifeTimeMin": 0.07999999821186066,
         "maxVelocity": [
-            1.0,
-            1.0,
-            1.0
+            0.0,
+            0.0,
+            0.0
         ],
         "minVelocity": [
-            -1.0,
-            -1.0,
-            -1.0
+            0.0,
+            0.0,
+            0.0
         ]
     }
 }

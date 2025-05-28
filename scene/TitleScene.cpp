@@ -88,7 +88,7 @@ void TitleScene::Draw()
 	objCommon_->skinningDrawCommonSetting();
 	//-----アニメーションの描画開始-----
 	sneak_->Draw(wt2_, vp_);
-	sneak_->DrawSkeleton(wt2_, vp_);
+	//sneak_->DrawSkeleton(wt2_, vp_);
 	//------------------------------
 
 	objCommon_->DrawCommonSetting();
@@ -99,7 +99,7 @@ void TitleScene::Draw()
 	/// Particleの描画準備
 	ptCommon_->DrawCommonSetting();
 	//------Particleの描画開始-------
-	emitter_->DrawCylinder();
+	emitter_->DrawRing();
 	//-----------------------------
 
 	//-----線描画-----
