@@ -3,16 +3,12 @@
 #include "WorldTransform.h"
 #include "Object3d.h"
 #include "ObjColor.h"
-#include "engine/utility/collider/Collider.h"
+#include "Collider.h"
 //std
 #include<string>
 
 class BaseObject {
 protected:
-
-	/// ===================================================
-	///protected variaus
-	/// ===================================================
 
 	// モデル配列データ
 	std::unique_ptr<Object3d> obj3d_;
@@ -23,31 +19,37 @@ protected:
 
 public:
 
-	/// ===================================================
-	///public method
-	/// ===================================================
-
-	//初期化、更新、描画
+	/// <summary>
+	/// 初期化
+	/// </summary>
 	virtual void Init();
+
+	/// <summary>
+	/// 更新処理
+	/// </summary>
 	virtual void Update();
+
+	/// <summary>
+	/// 描画処理
+	/// </summary>
 	virtual void Draw(const ViewProjection& viewProjection);
 
 	virtual void CreateModel(const std::string modelname);
 
 	virtual void DebugTransform(const std::string className);
 
-	// 中心座標取得
+	/// <summary>
+	/// 中心座標取得
+	/// </summary>
 	virtual Vector3 GetWorldPosition() const;
 	virtual const WorldTransform& GetWorldTransform() const { return transform_; }
 
-	/// ===================================================
-	///getter 
-	/// ===================================================
+	/// 各ステータス取得関数
+	/// <returns></returns>
 	const WorldTransform& GetTransform() { return transform_; }
 
-	/// ===================================================
-	///setter 
-	/// ===================================================
+	/// 各ステータス設定関数
+	/// <returns></returns>
 	void SetObjColor(Vector4 c) { objColor_.SetColor(c); }
 	void SetWorldPosition(Vector3 pos) { transform_.translation_ = pos; }
 	void SetWorldPositionY(float pos) { transform_.translation_.y = pos; }
