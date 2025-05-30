@@ -199,6 +199,7 @@ copy "$(WindowsSdkDIr)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\3d\model\animation\ModelAnimation.h" />
+    <ClInclude Include="engine\3d\particle\PrimitiveType.h" />
     <ClInclude Include="engine\utility\graphics\AnimationManager.h" />
     <ClInclude Include="engine\3d\model\animation\Bone.h" />
     <ClInclude Include="engine\3d\model\animation\Animator.h" />

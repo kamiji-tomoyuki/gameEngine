@@ -64,7 +64,7 @@ void ParticleEmitter::UpdateOnce(const ViewProjection& vp_)
 	transform_.UpdateMatrix();
 }
 
-void ParticleEmitter::Draw()
+void ParticleEmitter::Draw(PrimitiveType primitiveType)
 {
 	manager_->SetRandomRotate(isRandomRotate);
 	manager_->SetAcceMultipy(isAcceMultiply);
@@ -72,29 +72,7 @@ void ParticleEmitter::Draw()
 	manager_->SetRandomSize(isRandomScale);
 	manager_->SetAllRandomSize(isAllRamdomScale);
 	manager_->SetSinMove(isSinMove);
-	manager_->Draw();
-}
-
-void ParticleEmitter::DrawRing()
-{
-	manager_->SetRandomRotate(isRandomRotate);
-	manager_->SetAcceMultipy(isAcceMultiply);
-	manager_->SetBillBorad(isBillBoard);
-	manager_->SetRandomSize(isRandomScale);
-	manager_->SetAllRandomSize(isAllRamdomScale);
-	manager_->SetSinMove(isSinMove);
-	manager_->DrawRing();
-}
-
-void ParticleEmitter::DrawCylinder()
-{
-	manager_->SetRandomRotate(isRandomRotate);
-	manager_->SetAcceMultipy(isAcceMultiply);
-	manager_->SetBillBorad(isBillBoard);
-	manager_->SetRandomSize(isRandomScale);
-	manager_->SetAllRandomSize(isAllRamdomScale);
-	manager_->SetSinMove(isSinMove);
-	manager_->DrawCylinder();
+	manager_->Draw(primitiveType);
 }
 
 void ParticleEmitter::DrawEmitter()

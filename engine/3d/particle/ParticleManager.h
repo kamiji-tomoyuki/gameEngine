@@ -1,5 +1,6 @@
 #pragma once
 #include "ParticleCommon.h"
+#include "PrimitiveType.h"
 #include "SrvManager.h"
 #include "random"
 #include "ViewProjection.h"
@@ -28,9 +29,7 @@ public:
 	/// <summary>
 	/// 描画処理
 	/// </summary>
-	void Draw();
-	void DrawRing();
-	void DrawCylinder();
+	void Draw(PrimitiveType primitiveType);
 
 	/// <summary>
 	/// パーティクルグループ生成

@@ -118,50 +118,50 @@ void ParticleManager::Update(const ViewProjection& viewProjection)
 	}
 }
 
-void ParticleManager::Draw()
+void ParticleManager::Draw(PrimitiveType primitiveType)
 {
-	particleCommon->GetDxCommon()->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
+	if (primitiveType == Normal) {
+		particleCommon->GetDxCommon()->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
 
-	for (auto& [groupName, particleGroup] : particleGroups) {
-		if (particleGroup.instanceCount > 0) {
-			particleCommon->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
+		for (auto& [groupName, particleGroup] : particleGroups) {
+			if (particleGroup.instanceCount > 0) {
+				particleCommon->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
 
-			srvManager_->SetGraphicsRootDescriptorTable(1, particleGroup.instancingSRVIndex);
-			srvManager_->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetTextureIndexByFilePath(particleGroup.material.textureFilePath));
+				srvManager_->SetGraphicsRootDescriptorTable(1, particleGroup.instancingSRVIndex);
+				srvManager_->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetTextureIndexByFilePath(particleGroup.material.textureFilePath));
 
-			particleCommon->GetDxCommon()->GetCommandList()->DrawInstanced(UINT(modelData.vertices.size()), particleGroup.instanceCount, 0, 0);
+				particleCommon->GetDxCommon()->GetCommandList()->DrawInstanced(UINT(modelData.vertices.size()), particleGroup.instanceCount, 0, 0);
+			}
 		}
 	}
-}
 
-void ParticleManager::DrawRing()
-{
-	particleCommon->GetDxCommon()->GetCommandList()->IASetVertexBuffers(0, 1, &ringVertexBufferView);
+	else if (primitiveType == Ring) {
+		particleCommon->GetDxCommon()->GetCommandList()->IASetVertexBuffers(0, 1, &ringVertexBufferView);
 
-	for (auto& [groupName, particleGroup] : particleGroups) {
-		if (particleGroup.instanceCount > 0) {
-			particleCommon->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
+		for (auto& [groupName, particleGroup] : particleGroups) {
+			if (particleGroup.instanceCount > 0) {
+				particleCommon->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
 
-			srvManager_->SetGraphicsRootDescriptorTable(1, particleGroup.instancingSRVIndex);
-			srvManager_->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetTextureIndexByFilePath(particleGroup.material.textureFilePath));
+				srvManager_->SetGraphicsRootDescriptorTable(1, particleGroup.instancingSRVIndex);
+				srvManager_->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetTextureIndexByFilePath(particleGroup.material.textureFilePath));
 
-			particleCommon->GetDxCommon()->GetCommandList()->DrawInstanced(UINT(ringModelData.vertices.size()), particleGroup.instanceCount, 0, 0);
+				particleCommon->GetDxCommon()->GetCommandList()->DrawInstanced(UINT(ringModelData.vertices.size()), particleGroup.instanceCount, 0, 0);
+			}
 		}
 	}
-}
 
-void ParticleManager::DrawCylinder()
-{
-	particleCommon->GetDxCommon()->GetCommandList()->IASetVertexBuffers(0, 1, &cylinderVertexBufferView);
+	else if (primitiveType == Cylinder) {
+		particleCommon->GetDxCommon()->GetCommandList()->IASetVertexBuffers(0, 1, &cylinderVertexBufferView);
 
-	for (auto& [groupName, particleGroup] : particleGroups) {
-		if (particleGroup.instanceCount > 0) {
-			particleCommon->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
+		for (auto& [groupName, particleGroup] : particleGroups) {
+			if (particleGroup.instanceCount > 0) {
+				particleCommon->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
 
-			srvManager_->SetGraphicsRootDescriptorTable(1, particleGroup.instancingSRVIndex);
-			srvManager_->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetTextureIndexByFilePath(particleGroup.material.textureFilePath));
+				srvManager_->SetGraphicsRootDescriptorTable(1, particleGroup.instancingSRVIndex);
+				srvManager_->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetTextureIndexByFilePath(particleGroup.material.textureFilePath));
 
-			particleCommon->GetDxCommon()->GetCommandList()->DrawInstanced(UINT(cylinderModelData.vertices.size()), particleGroup.instanceCount, 0, 0);
+				particleCommon->GetDxCommon()->GetCommandList()->DrawInstanced(UINT(cylinderModelData.vertices.size()), particleGroup.instanceCount, 0, 0);
+			}
 		}
 	}
 }
@@ -194,10 +194,10 @@ void ParticleManager::CreateVartexData(const std::string& filename)
 {
 	modelData = LoadObjFile("resources/models/", filename);
 
-	ringModelData.material.textureFilePath = "resources/images/gradationLine.png";
+	ringModelData.material.textureFilePath = "resources/images/" + filename;
 	CreateRingVartexData();
 
-	cylinderModelData.material.textureFilePath = "resources/images/gradationLine.png";
+	cylinderModelData.material.textureFilePath = "resources/images/" + filename;
 	CreateCylinderVartexData();
 
 	// --- 頂点リソース生成 ---
