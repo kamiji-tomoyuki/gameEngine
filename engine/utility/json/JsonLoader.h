@@ -53,7 +53,14 @@ public:
 
 public:
 
-    /// --- レベルデザイン関数 ---
+    /// --- Scene関数 ---
+
+     /// <summary>
+    /// SCENE出力JSONファイルを読み込む
+    /// </summary>
+    /// <param name="filePath">: 読み込むJSONファイルのパス</param>
+    /// <returns>読み込み成功ならtrue</returns>
+    void LoadSceneFile(const std::string& filePath);
 
     /// <summary>
     /// 指定した名前のオブジェクトが存在するかを確認
