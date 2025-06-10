@@ -81,7 +81,7 @@ void TitleScene::Draw()
 
 	objCommon_->skinningDrawCommonSetting();
 	//-----アニメーションの描画開始-----
-	sneak_->Draw(wt2_, vp_);
+	//sneak_->Draw(wt2_, vp_);
 	sneak_->DrawSkeleton(wt2_, vp_);
 	//------------------------------
 

@@ -28,8 +28,11 @@ void Object3d::Initialize(const std::string& filePath)
 	modelAnimation_->SetHaveBone(hasBone_);
 
 	model->SetAnimator(modelAnimation_->GetAnimator());
-	model->SetBone(modelAnimation_->GetBone());
-	model->SetSkin(modelAnimation_->GetSkin());
+
+	if (hasBone_) {
+		model->SetBone(modelAnimation_->GetBone());
+		model->SetSkin(modelAnimation_->GetSkin());
+	}
 }
 
 void Object3d::Update(const WorldTransform& worldTransform, const ViewProjection& viewProjection)
@@ -84,6 +87,16 @@ void Object3d::Draw(const WorldTransform& worldTransform, const ViewProjection& 
 	}
 	materialData->enableLighting = Lighting;
 	Update(worldTransform, viewProjection);
+
+	// パイプライン切り替え
+	if (hasBone_ && modelAnimation_ && modelAnimation_->GetAnimator()->HaveAnimation()) {
+		// スキニング用パイプライン設定
+		obj3dCommon->skinningDrawCommonSetting();
+	}
+	else {
+		// 通常パイプライン設定
+		obj3dCommon->DrawCommonSetting();
+	}
 
 	obj3dCommon->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
 	obj3dCommon->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(1, transformationMatrixResource->GetGPUVirtualAddress());

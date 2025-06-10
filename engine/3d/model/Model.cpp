@@ -14,54 +14,53 @@ void Model::Initialize(ModelCommon* modelCommon, const std::string& directorypat
 {
 	// --- 引数で受け取りメンバ変数に記録 ---
 	modelCommon_ = modelCommon;
-
-	// --- パスを設定 ---
 	directorypath_ = directorypath;
 	filename_ = filename;
 	srvManager_ = SrvManager::GetInstance();
-	
-	// --- モデル読み込み ---
+
 	modelData = LoadModelFile(directorypath_, filename_);
 
 	CreateVartexData();
 	CreateIndexResource();
 
-	// --- スキニングアニメーションか判別 ---
+	// スキニングアニメーションか判別
 	Assimp::Importer importer;
 	const aiScene* scene = importer.ReadFile(directorypath_ + filename_, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices);
 
 	hasBone_ = false;
-
-	for (unsigned int i = 0; i < scene->mNumMeshes; ++i) {
-		if (scene->mMeshes[i]->HasBones()) {
-			hasBone_ = true;
-			break;
+	if (scene) {
+		for (unsigned int i = 0; i < scene->mNumMeshes; ++i) {
+			if (scene->mMeshes[i]->HasBones()) {
+				hasBone_ = true;
+				break;
+			}
 		}
 	}
 
-	// --- .objの参照しているテクスチャファイル読み込み ---
+	// テクスチャ読み込み
 	TextureManager::GetInstance()->LoadTexture(modelData.material.textureFilePath);
-	// 単位行列を書き込んでおく
 	modelData.material.textureIndex = TextureManager::GetInstance()->GetTextureIndexByFilePath(modelData.material.textureFilePath);
 
-
+	// アニメーター、ボーン、スキンの初期化は後で行う
+	animator_ = nullptr;
+	bone_ = nullptr;
+	skin_ = nullptr;
 }
 
 void Model::Draw()
 {
-	D3D12_VERTEX_BUFFER_VIEW vbvs[2] = {
-	vertexBufferView,
-	skin_->GetSkinCluster().influenceBufferView
-	};
-
 	if (!animator_->HaveAnimation() || !CheckBone()) {
-		// アニメーションなし
-		modelCommon_->GetDxCommon()->GetCommandList()->IASetVertexBuffers(0, 1, vbvs);
+		// アニメーションなし - 通常の頂点バッファのみ使用
+		modelCommon_->GetDxCommon()->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
 		modelCommon_->GetDxCommon()->GetCommandList()->IASetIndexBuffer(&indexBufferView);
 		srvManager_->SetGraphicsRootDescriptorTable(2, modelData.material.textureIndex);
 	}
 	else {
-		// アニメーションあり
+		// アニメーションあり - 頂点バッファ + スキニング用バッファ
+		D3D12_VERTEX_BUFFER_VIEW vbvs[2] = {
+			vertexBufferView,
+			skin_->GetSkinCluster().influenceBufferView
+		};
 		modelCommon_->GetDxCommon()->GetCommandList()->IASetVertexBuffers(0, 2, vbvs);
 		modelCommon_->GetDxCommon()->GetCommandList()->IASetIndexBuffer(&indexBufferView);
 		srvManager_->SetGraphicsRootDescriptorTable(2, modelData.material.textureIndex);
