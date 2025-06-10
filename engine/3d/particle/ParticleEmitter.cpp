@@ -984,5 +984,5 @@ void ParticleEmitter::imgui() {
     style = oldStyle;
 
     ImGui::End();
-}
 #endif
+}

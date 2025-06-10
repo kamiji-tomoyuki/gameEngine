@@ -2,29 +2,8 @@
     "name": "scene",
     "objects": [
         {
-            "type": "LIGHT",
-            "name": "Light",
-            "transform": {
-                "translation": [
-                    4.076245307922363,
-                    1.0054539442062378,
-                    5.903861999511719
-                ],
-                "rotation": [
-                    37.26104736328125,
-                    3.1637091636657715,
-                    106.93632507324219
-                ],
-                "scaling": [
-                    1.0,
-                    0.9999999403953552,
-                    1.0
-                ]
-            }
-        },
-        {
             "type": "MESH",
-            "name": "Cube",
+            "name": "plane",
             "transform": {
                 "translation": [
                     0.0,
@@ -42,35 +21,14 @@
                     1.0
                 ]
             },
-            "file_name": ""
-        },
-        {
-            "type": "CAMERA",
-            "name": "Camera",
-            "transform": {
-                "translation": [
-                    7.358891487121582,
-                    -6.925790786743164,
-                    4.958309173583984
-                ],
-                "rotation": [
-                    63.559295654296875,
-                    2.2983238068263745e-07,
-                    46.69194412231445
-                ],
-                "scaling": [
-                    1.0,
-                    1.0,
-                    1.0
-                ]
-            }
+            "file_name": "plane.obj"
         },
         {
             "type": "MESH",
-            "name": "ICO球",
+            "name": "suzannu",
             "transform": {
                 "translation": [
-                    3.0,
+                    0.0,
                     0.0,
                     0.0
                 ],
@@ -85,14 +43,14 @@
                     1.0
                 ]
             },
-            "file_name": "ico_ball"
+            "file_name": "suzannu.obj"
         },
         {
             "type": "MESH",
-            "name": "ICO球.001",
+            "name": "ICO",
             "transform": {
                 "translation": [
-                    -3.0,
+                    0.0,
                     0.0,
                     0.0
                 ],
@@ -106,70 +64,8 @@
                     1.0,
                     1.0
                 ]
-            }
-        },
-        {
-            "type": "MESH",
-            "name": "ICO球.002",
-            "transform": {
-                "translation": [
-                    2.0,
-                    1.5,
-                    0.0
-                ],
-                "rotation": [
-                    0.0,
-                    -0.0,
-                    0.0
-                ],
-                "scaling": [
-                    1.0,
-                    1.0,
-                    1.0
-                ]
-            }
-        },
-        {
-            "type": "MESH",
-            "name": "ICO球.003",
-            "transform": {
-                "translation": [
-                    -2.0,
-                    1.5,
-                    0.0
-                ],
-                "rotation": [
-                    0.0,
-                    -0.0,
-                    0.0
-                ],
-                "scaling": [
-                    1.0,
-                    1.0,
-                    1.0
-                ]
-            }
-        },
-        {
-            "type": "MESH",
-            "name": "ICO球.004",
-            "transform": {
-                "translation": [
-                    0.0,
-                    2.0,
-                    0.0
-                ],
-                "rotation": [
-                    0.0,
-                    -0.0,
-                    0.0
-                ],
-                "scaling": [
-                    1.0,
-                    1.0,
-                    1.0
-                ]
-            }
+            },
+            "file_name": "ICO.obj"
         }
     ]
 }

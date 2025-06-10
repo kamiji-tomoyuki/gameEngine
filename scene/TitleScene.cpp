@@ -29,8 +29,6 @@ void TitleScene::Initialize()
 	wt1_.translation_ = { -2.0f,0.0f,0.0f };
 	wt2_.translation_ = { 2.0f,0.0f,0.0f };
 
-	walk_ = std::make_unique<Object3d>();
-	walk_->Initialize("AnimatedCube.gltf");
 	sneak_ = std::make_unique<Object3d>();
 	sneak_->Initialize("walk.gltf");
 	sneak_->SetAnimation("sneakWalk.gltf");
@@ -39,11 +37,7 @@ void TitleScene::Initialize()
 	emitter_->Initialize("test", "debug/ringPlane.obj");
 
 	json_ = std::make_unique<JsonLoader>();
-	std::string filePath = "scene/test.json";
-	std::string targetName = "ICO球";
-
-  Vector3 position = json_->GetWorldTransform(filePath, targetName);
-	wt2_.translation_ = position;
+	json_->LoadSceneFile("test.json");
 }
 
 void TitleScene::Finalize()
@@ -65,12 +59,12 @@ void TitleScene::Update()
 	ChangeScene();
 
 	emitter_->Update(vp_);
-	walk_->Update(wt1_, vp_);
-	walk_->AnimationUpdate(roop);
 	sneak_->AnimationUpdate(roop);
 
 	wt1_.UpdateMatrix();
 	wt2_.UpdateMatrix();
+
+	json_->UpdateScene();
 }
 
 void TitleScene::Draw()
@@ -93,7 +87,7 @@ void TitleScene::Draw()
 
 	objCommon_->DrawCommonSetting();
 	//-----3DObjectの描画開始-----
-	walk_->Draw(wt1_, vp_);
+	json_->DrawScene(vp_);
 	//--------------------------
 
 	/// Particleの描画準備
