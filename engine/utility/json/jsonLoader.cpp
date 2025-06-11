@@ -60,7 +60,6 @@ void JsonLoader::LoadSceneFile(const std::string& filePath)
 	const std::string fullPath = "resources/jsons/scene/" + filePath;
 
 	std::ifstream file(fullPath);
-	file.open(fullPath);
 
 	if (file.fail()) {
 		assert(0);

@@ -31,7 +31,7 @@ void TitleScene::Initialize()
 
 	sneak_ = std::make_unique<Object3d>();
 	sneak_->Initialize("walk.gltf");
-	sneak_->SetAnimation("sneakWalk.gltf");
+	//sneak_->SetAnimation("sneakWalk.gltf");
 
 	emitter_ = std::make_unique<ParticleEmitter>();
 	emitter_->Initialize("test", "debug/ringPlane.obj");

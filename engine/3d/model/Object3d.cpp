@@ -23,6 +23,7 @@ void Object3d::Initialize(const std::string& filePath)
 	modelAnimation_ = std::make_unique<ModelAnimation>();
 	modelAnimation_->SetModelData(model->GetModelData());
 	modelAnimation_->Initialize("resources/models/", filePath);
+	modelAnimation_->GetAnimator()->SetAnimationTime(0.0f);
 
 	hasBone_ = model->CheckBone();
 	modelAnimation_->SetHaveBone(hasBone_);

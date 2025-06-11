@@ -49,8 +49,14 @@ void Model::Initialize(ModelCommon* modelCommon, const std::string& directorypat
 
 void Model::Draw()
 {
-	if (!animator_->HaveAnimation() || !CheckBone()) {
+	if (!animator_ || !animator_->HaveAnimation()) {
 		// アニメーションなし - 通常の頂点バッファのみ使用
+		modelCommon_->GetDxCommon()->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
+		modelCommon_->GetDxCommon()->GetCommandList()->IASetIndexBuffer(&indexBufferView);
+		srvManager_->SetGraphicsRootDescriptorTable(2, modelData.material.textureIndex);
+	}
+	else if (!CheckBone()) {
+		// アニメーションあり - 通常の頂点バッファのみ使用
 		modelCommon_->GetDxCommon()->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
 		modelCommon_->GetDxCommon()->GetCommandList()->IASetIndexBuffer(&indexBufferView);
 		srvManager_->SetGraphicsRootDescriptorTable(2, modelData.material.textureIndex);
@@ -115,7 +121,7 @@ MaterialData Model::LoadMaterialTemplateFile(const std::string& directoryPath, c
 
 	if (materialData.textureFilePath.empty()) {
 		// テクスチャが設定されていない場合、"white1x1.png" を割り当てる
-		materialData.textureFilePath = directoryPath + "/" + "white1x1.png";
+		materialData.textureFilePath = "resources/images/white1x1.png";
 	}
 
 	return materialData;
@@ -144,7 +150,7 @@ ModelData Model::LoadModelFile(const std::string& directoryPath, const std::stri
 
 	if (!scene || !scene->HasMeshes()) {
 		// テクスチャが設定されていない場合、"white1x1.png" を割り当てる
-		modelData.material.textureFilePath = directoryPath + "/" + "white1x1.png";
+		modelData.material.textureFilePath = "resources/images/white1x1.png";
 		return modelData;
 	}
 
@@ -216,7 +222,7 @@ ModelData Model::LoadModelFile(const std::string& directoryPath, const std::stri
 	}
 	if (modelData.material.textureFilePath.empty()) {
 		// テクスチャが設定されていない場合、"white1x1.png" を割り当てる
-		modelData.material.textureFilePath = directoryPath + "/" + "white1x1.png";
+		modelData.material.textureFilePath = "resources/images/white1x1.png";
 	}
 	modelData.rootNode = ReadNode(scene->mRootNode);
 	return modelData;
