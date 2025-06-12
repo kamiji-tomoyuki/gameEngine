@@ -97,7 +97,9 @@ void TitleScene::Draw()
 	/// Particleの描画準備
 	ptCommon_->DrawCommonSetting();
 	//------Particleの描画開始-------
-	emitter_->DrawCylinder();
+
+	emitter_->Draw(Ring);
+
 	//-----------------------------
 
 	//-----線描画-----

@@ -565,6 +565,9 @@
     <ClInclude Include="engine\3d\model\animation\ModelAnimation.h">
       <Filter>ソースファイル\myEngine\3d\model\animation</Filter>
     </ClInclude>
+    <ClInclude Include="engine\3d\particle\PrimitiveType.h">
+      <Filter>ソースファイル\myEngine\3d\particle</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\shaders\Particle\Particle.PS.hlsl">

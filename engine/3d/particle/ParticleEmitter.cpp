@@ -13,7 +13,7 @@ void ParticleEmitter::Initialize(const std::string& name, const std::string& fil
 	manager_ = std::make_unique<ParticleManager>();
 	manager_->Initialize(SrvManager::GetInstance());
 	manager_->CreateParticleGroup(name_, fileName);
-	
+
 	// --- 各ステータスにデフォルト値を設定 ---
 	emitFrequency_ = 0.1f;
 	velocityMin_ = { -1.0f, -1.0f, -1.0f };
@@ -64,7 +64,7 @@ void ParticleEmitter::UpdateOnce(const ViewProjection& vp_)
 	transform_.UpdateMatrix();
 }
 
-void ParticleEmitter::Draw()
+void ParticleEmitter::Draw(PrimitiveType primitiveType)
 {
 	manager_->SetRandomRotate(isRandomRotate);
 	manager_->SetAcceMultipy(isAcceMultiply);
@@ -72,29 +72,7 @@ void ParticleEmitter::Draw()
 	manager_->SetRandomSize(isRandomScale);
 	manager_->SetAllRandomSize(isAllRamdomScale);
 	manager_->SetSinMove(isSinMove);
-	manager_->Draw();
-}
-
-void ParticleEmitter::DrawRing()
-{
-	manager_->SetRandomRotate(isRandomRotate);
-	manager_->SetAcceMultipy(isAcceMultiply);
-	manager_->SetBillBorad(isBillBoard);
-	manager_->SetRandomSize(isRandomScale);
-	manager_->SetAllRandomSize(isAllRamdomScale);
-	manager_->SetSinMove(isSinMove);
-	manager_->DrawRing();
-}
-
-void ParticleEmitter::DrawCylinder()
-{
-	manager_->SetRandomRotate(isRandomRotate);
-	manager_->SetAcceMultipy(isAcceMultiply);
-	manager_->SetBillBorad(isBillBoard);
-	manager_->SetRandomSize(isRandomScale);
-	manager_->SetAllRandomSize(isAllRamdomScale);
-	manager_->SetSinMove(isSinMove);
-	manager_->DrawCylinder();
+	manager_->Draw(primitiveType);
 }
 
 void ParticleEmitter::DrawEmitter()
@@ -133,15 +111,15 @@ void ParticleEmitter::DrawEmitter()
 
 
 void ParticleEmitter::Emit() {
-		manager_->Emit(
+	manager_->Emit(
 		name_,
 		transform_.translation_,
 		count_,
 		transform_.scale_,
-		velocityMin_,     
-		velocityMax_,     
-		lifeTimeMin_,     
-		lifeTimeMax_,     
+		velocityMin_,
+		velocityMax_,
+		lifeTimeMin_,
+		lifeTimeMax_,
 		startScale_,
 		endScale_,
 		startAcce_,
@@ -984,5 +962,6 @@ void ParticleEmitter::imgui() {
     style = oldStyle;
 
     ImGui::End();
+
 #endif
 }
