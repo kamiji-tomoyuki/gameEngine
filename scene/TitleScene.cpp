@@ -24,9 +24,9 @@ void TitleScene::Initialize()
 	debugCamera_->Initialize(&vp_);
 
 	wt1_.Initialize();
-	wt2_.Initialize();
-
 	wt1_.translation_ = { -2.0f,0.0f,0.0f };
+
+	wt2_.Initialize();
 	wt2_.translation_ = { 3.0f,1.0f,0.0f };
 
 	sneak_ = std::make_unique<Object3d>();

@@ -1,6 +1,7 @@
 #include "JsonLoader.h"
 #include <fstream>
 #include <iostream>
+#include <numbers>
 #include <ModelManager.h>
 
 bool JsonLoader::LoadFromFile(const std::string& filePath) {
@@ -79,6 +80,9 @@ void JsonLoader::LoadSceneFile(const std::string& filePath)
 
 	assert(name.compare("scene") == 0);
 
+	// levelData_を一度だけ初期化
+	levelData_ = std::make_unique<LevelData>();
+
 	// --- オブジェクトの走査 ---
 	for (nlohmann::json& object : deserialized["objects"]) {
 		assert(object.contains("type"));
@@ -87,11 +91,9 @@ void JsonLoader::LoadSceneFile(const std::string& filePath)
 		std::string type = object["type"].get<std::string>();
 
 		// 種類ごとの処理
-		levelData_ = std::make_unique<LevelData>();
-		
 		// MESH
 		if (type.compare("MESH") == 0) {
-			levelData_->objects.emplace_back(ObjectData{});
+			levelData_->objects.push_back(ObjectData{});
 			ObjectData& objectData = levelData_->objects.back();
 
 			if (object.contains("file_name")) {
@@ -105,9 +107,10 @@ void JsonLoader::LoadSceneFile(const std::string& filePath)
 			objectData.translation.y = (float)transform["translation"][2];
 			objectData.translation.z = (float)transform["translation"][1];
 
-			objectData.rotation.x = -(float)transform["rotation"][0];
-			objectData.rotation.y = -(float)transform["rotation"][2];
-			objectData.rotation.z = -(float)transform["rotation"][1];
+			const float degToRad = (float)std::numbers::pi / 180.0f;
+			objectData.rotation.x = -(float)transform["rotation"][0] * degToRad;
+			objectData.rotation.y = -(float)transform["rotation"][2] * degToRad;
+			objectData.rotation.z = -(float)transform["rotation"][1] * degToRad;
 
 			objectData.scale.x = (float)transform["scaling"][0];
 			objectData.scale.y = (float)transform["scaling"][2];
@@ -280,9 +283,10 @@ void JsonLoader::Recursive(const nlohmann::json& jsonObject, ObjectData& parent)
 		}
 
 		if (t.contains("rotation") && t["rotation"].is_array() && t["rotation"].size() == 3) {
-			parent.rotation.x = t["rotation"][0];
-			parent.rotation.y = t["rotation"][1];
-			parent.rotation.z = t["rotation"][2];
+			const float degToRad = (float)std::numbers::pi / 180.0f;
+			parent.rotation.x = t["rotation"][0] * degToRad;
+			parent.rotation.y = t["rotation"][1] * degToRad;
+			parent.rotation.z = t["rotation"][2] * degToRad;
 		}
 
 		if (t.contains("scaling") && t["scaling"].is_array() && t["scaling"].size() == 3) {
