@@ -66,6 +66,7 @@ private:
 
 	std::unique_ptr<Object3d> walk_;
 	std::unique_ptr<Object3d> sneak_;
+	std::unique_ptr<Object3d> cube_;
 
 	std::unique_ptr<ParticleEmitter> emitter_;
 

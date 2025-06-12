@@ -136,7 +136,7 @@ void JsonLoader::SetScene()
 		
 		// モデルを指定して3Dオブジェクトを生成
 		std::unique_ptr<Object3d> newObject = std::make_unique<Object3d>();
-		newObject->Initialize(objectData.fileName);
+		newObject->Initialize("scene/" + objectData.fileName);
 
 		// ワールド座標生成
 		std::unique_ptr<WorldTransform> worldTransform = std::make_unique<WorldTransform>();

@@ -51,7 +51,7 @@ void Object3d::Update(const WorldTransform& worldTransform, const ViewProjection
 
 	Matrix4x4 worldInverseMatrix = Inverse(worldMatrix);
 
-	if (!modelAnimation_) {
+	if (modelAnimation_) {
 		transformationMatrixData->WVP = worldViewProjectionMatrix_;
 		transformationMatrixData->World = worldTransform.matWorld_;
 		transformationMatrixData->WorldInverseTranspose = Transpose(worldInverseMatrix);

@@ -27,12 +27,14 @@ void TitleScene::Initialize()
 	wt2_.Initialize();
 
 	wt1_.translation_ = { -2.0f,0.0f,0.0f };
-	wt2_.translation_ = { 2.0f,0.0f,0.0f };
+	wt2_.translation_ = { 3.0f,1.0f,0.0f };
 
 	sneak_ = std::make_unique<Object3d>();
 	sneak_->Initialize("walk.gltf");
-	//sneak_->SetAnimation("sneakWalk.gltf");
 
+	cube_ = std::make_unique<Object3d>();
+	cube_->Initialize("AnimatedCube.gltf");
+	
 	emitter_ = std::make_unique<ParticleEmitter>();
 	emitter_->Initialize("test", "debug/ringPlane.obj");
 
@@ -60,6 +62,7 @@ void TitleScene::Update()
 
 	emitter_->Update(vp_);
 	sneak_->AnimationUpdate(roop);
+	cube_->AnimationUpdate(roop);;
 
 	wt1_.UpdateMatrix();
 	wt2_.UpdateMatrix();
@@ -81,12 +84,13 @@ void TitleScene::Draw()
 
 	objCommon_->skinningDrawCommonSetting();
 	//-----アニメーションの描画開始-----
-	//sneak_->Draw(wt2_, vp_);
-	sneak_->DrawSkeleton(wt2_, vp_);
+	sneak_->Draw(wt1_, vp_);
+	sneak_->DrawSkeleton(wt1_, vp_);
 	//------------------------------
 
 	objCommon_->DrawCommonSetting();
 	//-----3DObjectの描画開始-----
+	cube_->Draw(wt2_, vp_);
 	json_->DrawScene(vp_);
 	//--------------------------
 
