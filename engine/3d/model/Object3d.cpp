@@ -63,10 +63,14 @@ void Object3d::Update(const WorldTransform& worldTransform, const ViewProjection
 	}
 }
 
-void Object3d::AnimationUpdate(bool roop)
+void Object3d::UpdateAnimation(bool roop)
 {
 	if (modelAnimation_) {
 		modelAnimation_->Update(roop);
+	}
+
+	if (!hasBone_) {
+
 	}
 }
 
