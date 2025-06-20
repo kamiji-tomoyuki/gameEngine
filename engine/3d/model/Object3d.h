@@ -36,7 +36,7 @@ public: // メンバ関数
 	/// <summary>
 	/// アニメーションの更新処理
 	/// </summary>
-	void AnimationUpdate(bool roop);
+	void UpdateAnimation(bool roop);
 
 	/// <summary>
 	/// アニメーションの再生・停止

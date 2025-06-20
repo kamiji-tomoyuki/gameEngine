@@ -52,9 +52,16 @@ void Object3d::Update(const WorldTransform& worldTransform, const ViewProjection
 	Matrix4x4 worldInverseMatrix = Inverse(worldMatrix);
 
 	if (modelAnimation_) {
-		transformationMatrixData->WVP = worldViewProjectionMatrix_;
-		transformationMatrixData->World = worldTransform.matWorld_;
-		transformationMatrixData->WorldInverseTranspose = Transpose(worldInverseMatrix);
+		if (hasBone_) {
+			transformationMatrixData->WVP = worldViewProjectionMatrix_;
+			transformationMatrixData->World = worldTransform.matWorld_;
+			transformationMatrixData->WorldInverseTranspose = Transpose(worldInverseMatrix);
+		}
+		else {
+			transformationMatrixData->WVP = modelAnimation_->GetLocalMatrix() * worldViewProjectionMatrix_;
+			transformationMatrixData->World = modelAnimation_->GetLocalMatrix() * worldTransform.matWorld_;
+			transformationMatrixData->WorldInverseTranspose = Transpose(worldInverseMatrix);
+		}
 	}
 	else {
 		transformationMatrixData->WVP = modelAnimation_->GetLocalMatrix() * worldViewProjectionMatrix_;
@@ -63,10 +70,19 @@ void Object3d::Update(const WorldTransform& worldTransform, const ViewProjection
 	}
 }
 
-void Object3d::AnimationUpdate(bool roop)
+void Object3d::UpdateAnimation(bool roop)
 {
 	if (modelAnimation_) {
-		modelAnimation_->Update(roop);
+		if (hasBone_) {
+			modelAnimation_->Update(roop);
+		}
+		else {
+			modelAnimation_->UpdateNodeAnimation(roop);
+		}
+	}
+
+	if (!hasBone_) {
+
 	}
 }
 

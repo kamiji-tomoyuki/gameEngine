@@ -61,8 +61,8 @@ void TitleScene::Update()
 	ChangeScene();
 
 	emitter_->Update(vp_);
-	sneak_->AnimationUpdate(roop);
-	cube_->AnimationUpdate(roop);;
+	sneak_->UpdateAnimation(roop);
+	cube_->UpdateAnimation(roop);;
 
 	wt1_.UpdateMatrix();
 	wt2_.UpdateMatrix();
