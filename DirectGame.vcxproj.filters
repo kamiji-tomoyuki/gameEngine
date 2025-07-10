@@ -332,6 +332,15 @@
     <ClCompile Include="engine\3d\skybox\Skybox.cpp">
       <Filter>ソースファイル</Filter>
     </ClCompile>
+    <ClCompile Include="engine\3d\skybox\SkyboxManager.cpp">
+      <Filter>ソースファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\3d\skybox\SkyboxGeometry.cpp">
+      <Filter>ソースファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\3d\skybox\SkyboxTransform.cpp">
+      <Filter>ソースファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
@@ -573,6 +582,9 @@
       <Filter>ソースファイル\myEngine\3d\particle</Filter>
     </ClInclude>
     <ClInclude Include="engine\3d\skybox\Skybox.h" />
+    <ClInclude Include="engine\3d\skybox\SkyboxManager.h" />
+    <ClInclude Include="engine\3d\skybox\SkyboxGeometry.h" />
+    <ClInclude Include="engine\3d\skybox\SkyboxTransform.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\shaders\Particle\Particle.PS.hlsl">

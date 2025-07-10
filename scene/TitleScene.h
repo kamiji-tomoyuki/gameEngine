@@ -8,7 +8,7 @@
 #include "OffScreen.h"
 #include "ParticleCommon.h"
 #include "ParticleEmitter.h"
-#include "skybox/Skybox.h"
+#include "Skybox.h"
 #include "SpriteCommon.h"
 #include "WorldTransform.h"
 
