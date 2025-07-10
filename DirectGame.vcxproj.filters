@@ -329,6 +329,9 @@
     <ClCompile Include="engine\utility\json\JsonLoader.cpp">
       <Filter>ソースファイル\myEngine\utility\json</Filter>
     </ClCompile>
+    <ClCompile Include="engine\3d\skybox\Skybox.cpp">
+      <Filter>ソースファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
@@ -347,6 +350,7 @@
     <None Include="resources\shaders\OffScreen\FullScreen.hlsli">
       <Filter>リソース ファイル\OffScreen</Filter>
     </None>
+    <None Include="resources\shaders\SkyBox\Skybox.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h">
@@ -568,6 +572,7 @@
     <ClInclude Include="engine\3d\particle\PrimitiveType.h">
       <Filter>ソースファイル\myEngine\3d\particle</Filter>
     </ClInclude>
+    <ClInclude Include="engine\3d\skybox\Skybox.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\shaders\Particle\Particle.PS.hlsl">
@@ -624,6 +629,8 @@
     <FxCompile Include="resources\shaders\OffScreen\RadialBlur.PS.hlsl">
       <Filter>リソース ファイル\OffScreen</Filter>
     </FxCompile>
+    <FxCompile Include="resources\shaders\SkyBox\Skybox.VS.hlsl" />
+    <FxCompile Include="resources\shaders\SkyBox\Skybox.PS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">
