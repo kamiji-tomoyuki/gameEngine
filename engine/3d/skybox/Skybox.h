@@ -8,7 +8,7 @@
 #include <string>
 
 /// <summary>
-/// スカイボックスクラス（リファクタリング版）
+/// スカイボックス
 /// </summary>
 class Skybox {
   public:
