@@ -6,6 +6,7 @@ struct Material
     int enableLighting;
     float4x4 uvTransform;
     float shininess;
+    float enviromentCoefficent;
 };
 
 struct DirectionalLight
@@ -47,7 +48,7 @@ SamplerState gSampler : register(s0);
 ConstantBuffer<DirectionalLight> gDirectionalLight : register(b1);
 ConstantBuffer<Camera> gCamera : register(b2);
 ConstantBuffer<PointLight> gPointLight : register(b3); //<! ポイントライト定数バッファ
-
+TextureCube<float4> gEnvironmentTexture : register(t1);
 
 PixelShaderOutput main(VertexShaderOutput input)
 {
@@ -130,6 +131,13 @@ PixelShaderOutput main(VertexShaderOutput input)
                 output.color.rgb += (diffusePoint + specularPoint) * (gPointLight.color.rgb * gPointLight.intensity * factor);
             }
         }
+        
+        // === 環境マッピング ===
+        float3 cameraToPosition = normalize(input.worldPosition - gCamera.worldPosition);
+        float3 reflectedVector = reflect(cameraToPosition, normalize(input.normal));
+        float4 environmentColor = gEnvironmentTexture.Sample(gSampler, reflectedVector);
+        output.color.rgb += environmentColor.rgb * gMaterial.enviromentCoefficent;
+        
         output.color.a = gMaterial.color.a * textureColor.a;
     }
     else
@@ -144,5 +152,6 @@ PixelShaderOutput main(VertexShaderOutput input)
     {
         discard;
     }
+    
     return output;
 }

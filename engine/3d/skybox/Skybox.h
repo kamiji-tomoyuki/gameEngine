@@ -8,7 +8,7 @@
 #include <string>
 
 /// <summary>
-/// スカイボックスクラス（リファクタリング版）
+/// スカイボックス
 /// </summary>
 class Skybox {
   public:
@@ -41,6 +41,8 @@ class Skybox {
     /// スケール値の取得
     /// </summary>
     float GetScale() const { return scale_; }
+
+   uint32_t GetTextureIndex() { return textureIndex_; }
 
   private:
     // --- 管理クラス ---

@@ -203,28 +203,26 @@ void Framework::Draw() {
 
 void Framework::DisplayFPS() {
 #ifdef _DEBUG
-    ImGuiIO &io = ImGui::GetIO();
+    if (ImGui::CollapsingHeader("FPS")) {
 
-    // ウィンドウ固定
-    ImGui::SetNextWindowPos(ImVec2(1230, 0), ImGuiCond_Always);
-    ImGui::SetNextWindowBgAlpha(0.0f); // 背景を完全透明に設定
+        ImGuiIO &io = ImGui::GetIO();
+        // FPSを取得
+        float fps = Frame::GetFPS();
+        float deltaTime = Frame::DeltaTime() * 1000.0f; // ミリ秒単位に変換
 
-    // ウィンドウフラグを設定
-    ImGui::Begin("FPS Overlay", nullptr,
-                 ImGuiWindowFlags_NoTitleBar |           // タイトルバーを非表示
-                     ImGuiWindowFlags_NoResize |         // リサイズを禁止
-                     ImGuiWindowFlags_NoMove |           // ウィンドウの移動を禁止
-                     ImGuiWindowFlags_NoScrollbar |      // スクロールバーを非表示
-                     ImGuiWindowFlags_NoCollapse |       // 折りたたみボタンを非表示
-                     ImGuiWindowFlags_AlwaysAutoResize | // 必要なサイズに自動調整
-                     ImGuiWindowFlags_NoBackground       // 背景を非表示
-    );
+        // FPSを色付きで表示
+        ImVec4 color;
+        if (fps >= 59.0f) {
+            color = ImVec4(0.0f, 1.0f, 0.0f, 1.0f); // 60FPS付近なら緑色
+        } else if (fps >= 30.0f) {
+            color = ImVec4(1.0f, 1.0f, 0.0f, 1.0f); // 30-59FPSなら黄色
+        } else {
+            color = ImVec4(1.0f, 0.0f, 0.0f, 1.0f); // 30FPS未満なら赤色
+        }
 
-    // 文字色を緑に設定
-    ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(100, 255, 100, 255));
-    ImGui::Text("%.1f", io.Framerate);
-    ImGui::PopStyleColor();
-
-    ImGui::End();
+        ImGui::TextColored(color, "FPS: %.1f", fps);
+        ImGui::TextColored(color, "Frame: %.2f ms", deltaTime);
+        // ImGui::TreePop();
+    }
 #endif // _DEBUG
 }

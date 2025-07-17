@@ -28,20 +28,25 @@ void TitleScene::Initialize() {
     wt2_.Initialize();
     wt2_.translation_ = {3.0f, 1.0f, 0.0f};
 
+    skybox_ = std::make_unique<Skybox>();
+    skybox_->Initialize("rostock_laage_airport_4k.dds");
+
     sneak_ = std::make_unique<Object3d>();
     sneak_->Initialize("walk.gltf");
 
     cube_ = std::make_unique<Object3d>();
     cube_->Initialize("AnimatedCube.gltf");
 
-    skybox_ = std::make_unique<Skybox>();
-    skybox_->Initialize("rostock_laage_airport_4k.dds");
-
     emitter_ = std::make_unique<ParticleEmitter>();
     emitter_->Initialize("test", "debug/ringPlane.obj");
 
     json_ = std::make_unique<JsonLoader>();
     json_->LoadSceneFile("test.json");
+
+    sneak_->GetModel()->SetEnvironmentSrvIndex(skybox_->GetTextureIndex());
+    sneak_->SetRefrect(true);
+    cube_->GetModel()->SetEnvironmentSrvIndex(skybox_->GetTextureIndex());
+    cube_->SetRefrect(true);
 }
 
 void TitleScene::Finalize() {
