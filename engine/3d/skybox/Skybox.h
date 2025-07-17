@@ -42,6 +42,8 @@ class Skybox {
     /// </summary>
     float GetScale() const { return scale_; }
 
+   uint32_t GetTextureIndex() { return textureIndex_; }
+
   private:
     // --- 管理クラス ---
     SkyboxManager *skyboxManager_ = nullptr;

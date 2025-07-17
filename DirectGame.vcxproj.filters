@@ -173,7 +173,7 @@
     <ClCompile Include="math\myMath.cpp">
       <Filter>ソースファイル\math</Filter>
     </ClCompile>
-    <ClCompile Include="engine\utility\graphics\ModelManager.cpp">
+    <ClCompile Include="engine\3d\model\ModelManager.cpp">
       <Filter>ソースファイル\myEngine\utility\graphics</Filter>
     </ClCompile>
     <ClCompile Include="engine\utility\graphics\TextureManager.cpp">
@@ -479,7 +479,7 @@
     <ClInclude Include="engine\utility\edit\Liner.h">
       <Filter>ソースファイル\myEngine\utility\edit</Filter>
     </ClInclude>
-    <ClInclude Include="engine\utility\graphics\ModelManager.h">
+    <ClInclude Include="engine\3d\model\ModelManager.h">
       <Filter>ソースファイル\myEngine\utility\graphics</Filter>
     </ClInclude>
     <ClInclude Include="engine\utility\graphics\PipeLineManager.h">

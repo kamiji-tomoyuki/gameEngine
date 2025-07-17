@@ -6,6 +6,7 @@ struct Material
     int enableLighting;
     float4x4 uvTransform;
     float shininess;
+    float enviromentCoefficent;
 };
 
 struct DirectionalLight
@@ -135,7 +136,7 @@ PixelShaderOutput main(VertexShaderOutput input)
         float3 cameraToPosition = normalize(input.worldPosition - gCamera.worldPosition);
         float3 reflectedVector = reflect(cameraToPosition, normalize(input.normal));
         float4 environmentColor = gEnvironmentTexture.Sample(gSampler, reflectedVector);
-        output.color.rgb += environmentColor.rgb;
+        output.color.rgb += environmentColor.rgb * gMaterial.enviromentCoefficent;
         
         output.color.a = gMaterial.color.a * textureColor.a;
     }
