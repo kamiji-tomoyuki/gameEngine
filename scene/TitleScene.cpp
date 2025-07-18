@@ -43,6 +43,7 @@ void TitleScene::Initialize() {
     json_ = std::make_unique<JsonLoader>();
     json_->LoadSceneFile("test.json");
 
+    // 環境マッピング設定
     sneak_->GetModel()->SetEnvironmentSrvIndex(skybox_->GetTextureIndex());
     sneak_->SetRefrect(true);
     cube_->GetModel()->SetEnvironmentSrvIndex(skybox_->GetTextureIndex());

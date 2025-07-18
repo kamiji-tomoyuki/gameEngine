@@ -133,10 +133,14 @@ PixelShaderOutput main(VertexShaderOutput input)
         }
         
         // === 環境マッピング ===
-        float3 cameraToPosition = normalize(input.worldPosition - gCamera.worldPosition);
-        float3 reflectedVector = reflect(cameraToPosition, normalize(input.normal));
-        float4 environmentColor = gEnvironmentTexture.Sample(gSampler, reflectedVector);
-        output.color.rgb += environmentColor.rgb * gMaterial.enviromentCoefficent;
+        // 環境マッピング係数が0より大きい場合のみ環境マッピングを適用
+        if (gMaterial.enviromentCoefficent > 0.0f)
+        {
+            float3 cameraToPosition = normalize(input.worldPosition - gCamera.worldPosition);
+            float3 reflectedVector = reflect(cameraToPosition, normalize(input.normal));
+            float4 environmentColor = gEnvironmentTexture.Sample(gSampler, reflectedVector);
+            output.color.rgb += environmentColor.rgb * gMaterial.enviromentCoefficent;
+        }
         
         output.color.a = gMaterial.color.a * textureColor.a;
     }
