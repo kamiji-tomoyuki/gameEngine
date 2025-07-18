@@ -44,6 +44,16 @@ void Model::Initialize(ModelCommon *modelCommon, const std::string &directorypat
     animator_ = nullptr;
     bone_ = nullptr;
     skin_ = nullptr;
+
+    // 環境マッピングの初期化
+    useEnvironmentMapping_ = false;
+    environmentSrvIndex = 0;
+
+    // デフォルト環境テクスチャが設定されている場合は自動で使用
+    if (defaultEnvironmentSrvIndex != 0) {
+        environmentSrvIndex = defaultEnvironmentSrvIndex;
+        useEnvironmentMapping_ = true;
+    }
 }
 
 void Model::Draw() {
@@ -52,13 +62,11 @@ void Model::Draw() {
         modelCommon_->GetDxCommon()->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
         modelCommon_->GetDxCommon()->GetCommandList()->IASetIndexBuffer(&indexBufferView);
         srvManager_->SetGraphicsRootDescriptorTable(2, modelData.material.textureIndex);
-        srvManager_->SetGraphicsRootDescriptorTable(6, environmentSrvIndex);
     } else if (!CheckBone()) {
         // アニメーションあり - 通常の頂点バッファのみ使用
         modelCommon_->GetDxCommon()->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
         modelCommon_->GetDxCommon()->GetCommandList()->IASetIndexBuffer(&indexBufferView);
         srvManager_->SetGraphicsRootDescriptorTable(2, modelData.material.textureIndex);
-        srvManager_->SetGraphicsRootDescriptorTable(6, environmentSrvIndex);
     } else {
         // アニメーションあり - 頂点バッファ + スキニング用バッファ
         D3D12_VERTEX_BUFFER_VIEW vbvs[2] = {
@@ -70,7 +78,23 @@ void Model::Draw() {
         srvManager_->SetGraphicsRootDescriptorTable(2, modelData.material.textureIndex);
         srvManager_->SetGraphicsRootDescriptorTable(7, skin_->GetSrvIndex());
     }
-    srvManager_->SetGraphicsRootDescriptorTable(6,environmentSrvIndex);
+
+    // 環境マッピングのテクスチャを設定
+    // 個別に設定されている場合はそれを使用、なければデフォルトを使用
+    uint32_t envIndex = environmentSrvIndex;
+    if (envIndex == 0 && defaultEnvironmentSrvIndex != 0) {
+        envIndex = defaultEnvironmentSrvIndex;
+    }
+
+    if (envIndex != 0) {
+        srvManager_->SetGraphicsRootDescriptorTable(6, envIndex);
+    } else {
+        // 環境テクスチャが設定されていない場合は、ダミーテクスチャを設定
+        // または白いテクスチャのインデックスを使用
+        uint32_t whiteTextureIndex = TextureManager::GetInstance()->GetTextureIndexByFilePath("resources/images/white1x1.png");
+        srvManager_->SetGraphicsRootDescriptorTable(6, whiteTextureIndex);
+    }
+
     // --- 描画 ---
     modelCommon_->GetDxCommon()->GetCommandList()->DrawIndexedInstanced(UINT(modelData.indices.size()), 1, 0, 0, 0);
 }

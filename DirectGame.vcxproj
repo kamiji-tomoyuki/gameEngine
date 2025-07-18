@@ -154,7 +154,7 @@ copy "$(WindowsSdkDIr)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="engine\utility\debug\Logger.cpp" />
     <ClCompile Include="engine\3d\model\Model.cpp" />
     <ClCompile Include="engine\3d\model\ModelCommon.cpp" />
-    <ClCompile Include="engine\3d\model\ModelManager.cpp" />
+    <ClCompile Include="engine\utility\graphics\ModelManager.cpp" />
     <ClCompile Include="engine\3d\model\Object3d.cpp" />
     <ClCompile Include="engine\3d\model\Object3dCommon.cpp" />
     <ClCompile Include="engine\2d\Sprite.cpp" />
@@ -258,7 +258,7 @@ copy "$(WindowsSdkDIr)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="engine\utility\debug\Logger.h" />
     <ClInclude Include="engine\3d\model\Model.h" />
     <ClInclude Include="engine\3d\model\ModelCommon.h" />
-    <ClInclude Include="engine\3d\model\ModelManager.h" />
+    <ClInclude Include="engine\utility\graphics\ModelManager.h" />
     <ClInclude Include="engine\3d\model\Object3d.h" />
     <ClInclude Include="engine\3d\model\Object3dCommon.h" />
     <ClInclude Include="engine\2d\Sprite.h" />

@@ -54,6 +54,7 @@ class Model {
     void SetSkin(Skin *skin) { skin_ = skin; }
     void SetBone(Bone *bone) { bone_ = bone; }
     void SetEnvironmentSrvIndex(uint32_t index) { environmentSrvIndex = index; }
+    void SetDefaultEnvironmentTexture(uint32_t srvIndex) { defaultEnvironmentSrvIndex = srvIndex; }
 
   private:
     /// <summary>
@@ -95,8 +96,6 @@ class Model {
     ModelData modelData;
     SrvManager *srvManager_;
 
-    uint32_t environmentSrvIndex = 0;
-
     // vertexResource
     Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource = nullptr;
     VertexData *vertexData = nullptr;
@@ -120,4 +119,9 @@ class Model {
     bool hasBone_ = false;
 
     static std::unordered_set<std::string> jointNames;
+
+    // 環境マッピング
+    bool useEnvironmentMapping_;
+    uint32_t defaultEnvironmentSrvIndex = 0;
+    uint32_t environmentSrvIndex = 0;
 };
