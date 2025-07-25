@@ -34,21 +34,21 @@ void SceneManager::Update()
 {
 #ifdef _DEBUG
 
-	ImGui::Begin("scene");
-	if (ImGui::Button("TitleScene") && (transition_->IsEnd() && !transition_->FadeInStart())) {
-		transition_->Reset();
-		nextScene_ = sceneFactory_->CreateScene("TITLE");
-		transition_->SetFadeInStart(true);
-	}
-	if (ImGui::Button("GameScene") && (transition_->IsEnd() && !transition_->FadeInStart())) {
-		if (!transition_->IsEnd() && transition_->FadeInStart()) {
-			return; // すでに遷移中なので、次の遷移予約はしない
-		}
-		transition_->Reset();
-		nextScene_ = sceneFactory_->CreateScene("GAME");
-		transition_->SetFadeInStart(true);
-	}
-	ImGui::End();
+	//ImGui::Begin("scene");
+	//if (ImGui::Button("TitleScene") && (transition_->IsEnd() && !transition_->FadeInStart())) {
+	//	transition_->Reset();
+	//	nextScene_ = sceneFactory_->CreateScene("TITLE");
+	//	transition_->SetFadeInStart(true);
+	//}
+	//if (ImGui::Button("GameScene") && (transition_->IsEnd() && !transition_->FadeInStart())) {
+	//	if (!transition_->IsEnd() && transition_->FadeInStart()) {
+	//		return; // すでに遷移中なので、次の遷移予約はしない
+	//	}
+	//	transition_->Reset();
+	//	nextScene_ = sceneFactory_->CreateScene("GAME");
+	//	transition_->SetFadeInStart(true);
+	//}
+	//ImGui::End();
 
 #endif // _DEBUG
 

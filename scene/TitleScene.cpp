@@ -150,7 +150,7 @@ void TitleScene::DrawForOffScreen() {
 }
 
 void TitleScene::Debug() {
-    ImGui::Begin("TitleScene:Debug");
+    /*ImGui::Begin("TitleScene:Debug");
 
     debugCamera_->imgui();
 
@@ -160,7 +160,7 @@ void TitleScene::Debug() {
 
     ImGui::End();
 
-    emitter_->imgui();
+    emitter_->imgui();*/
 }
 
 void TitleScene::CameraUpdate() {
