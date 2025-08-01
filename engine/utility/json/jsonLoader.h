@@ -136,7 +136,7 @@ class JsonLoader {
     /// </summary>
     /// <returns>プレイヤーデータのベクター</returns>
     const std::vector<PlayerData> &GetPlayers() const;
-    
+     
     /// <summary>
     /// 敵データを取得
     /// </summary>
