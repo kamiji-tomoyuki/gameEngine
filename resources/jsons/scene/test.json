@@ -44,35 +44,34 @@
             }
         },
         {
-            "type": "MESH",
-            "name": "モンキー",
+            "type": "EnemySpawn",
+            "name": "EnemySpawn",
             "transform": {
                 "translation": [
-                    -6.523934841156006,
-                    2.950100898742676,
-                    0.6419637203216553
+                    2.5,
+                    4.0,
+                    -1.0
                 ],
                 "rotation": [
                     0.0,
                     -0.0,
-                    32.96999740600586
+                    150.0
                 ],
                 "scaling": [
                     1.0,
                     1.0,
                     1.0
                 ]
-            },
-            "file_name": "suzannu.obj"
+            }
         },
         {
-            "type": "MESH",
-            "name": "平面",
+            "type": "PlayerSpawn",
+            "name": "PlayerSpawn",
             "transform": {
                 "translation": [
                     0.0,
                     0.0,
-                    -0.9689791202545166
+                    -1.0
                 ],
                 "rotation": [
                     0.0,
@@ -85,7 +84,51 @@
                     1.0
                 ]
             },
-            "file_name": "ground.obj"
+            "isDraw": false
+        },
+        {
+            "type": "MESH",
+            "name": "平面",
+            "transform": {
+                "translation": [
+                    0.0,
+                    0.0,
+                    -1.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    20.0,
+                    20.0,
+                    1.0
+                ]
+            },
+            "file_name": "Ground.obj"
+        },
+        {
+            "type": "MESH",
+            "name": "立方体",
+            "transform": {
+                "translation": [
+                    -3.6239726543426514,
+                    4.622923851013184,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    32.467323303222656
+                ],
+                "scaling": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "file_name": "Cube.obj"
         }
     ]
 }

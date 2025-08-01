@@ -65,9 +65,8 @@ private:
 	WorldTransform wt1_;
 	WorldTransform wt2_;
 
-	std::unique_ptr<Object3d> walk_;
-	std::unique_ptr<Object3d> sneak_;
-	std::unique_ptr<Object3d> cube_;
+	std::unique_ptr<Object3d> player_;
+	std::unique_ptr<Object3d> enemy_;
 
 	std::unique_ptr<Skybox> skybox_;
 
