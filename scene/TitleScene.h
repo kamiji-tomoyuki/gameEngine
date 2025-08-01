@@ -8,6 +8,7 @@
 #include "OffScreen.h"
 #include "ParticleCommon.h"
 #include "ParticleEmitter.h"
+#include "Skybox.h"
 #include "SpriteCommon.h"
 #include "WorldTransform.h"
 
@@ -67,6 +68,8 @@ private:
 	std::unique_ptr<Object3d> walk_;
 	std::unique_ptr<Object3d> sneak_;
 	std::unique_ptr<Object3d> cube_;
+
+	std::unique_ptr<Skybox> skybox_;
 
 	std::unique_ptr<ParticleEmitter> emitter_;
 
