@@ -23,19 +23,16 @@ void TitleScene::Initialize() {
     debugCamera_->Initialize(&vp_);
 
     wt1_.Initialize();
-    wt1_.translation_ = {-2.0f, 0.0f, 0.0f};
-
     wt2_.Initialize();
-    wt2_.translation_ = {3.0f, 1.0f, 0.0f};
 
     skybox_ = std::make_unique<Skybox>();
     skybox_->Initialize("rostock_laage_airport_4k.dds");
 
-    sneak_ = std::make_unique<Object3d>();
-    sneak_->Initialize("walk.gltf");
+    player_ = std::make_unique<Object3d>();
+    player_->Initialize("walk.gltf");
 
-    cube_ = std::make_unique<Object3d>();
-    cube_->Initialize("AnimatedCube.gltf");
+    enemy_ = std::make_unique<Object3d>();
+    enemy_->Initialize("sneakWalk.gltf");
 
     emitter_ = std::make_unique<ParticleEmitter>();
     emitter_->Initialize("test", "debug/ringPlane.obj");
@@ -43,11 +40,24 @@ void TitleScene::Initialize() {
     json_ = std::make_unique<JsonLoader>();
     json_->LoadSceneFile("test.json");
 
+    // jsonからキャラクターの初期位置を設定
+    const auto &players = json_->GetPlayers();
+    if (!players.empty()) {
+        const auto &playerData = players[0];
+        wt1_.translation_ = playerData.translation;
+        wt1_.rotation_ = playerData.rotation;
+    }
+
+    const auto &enemies = json_->GetEnemies();
+    if (!enemies.empty()) {
+        const auto &enemyData = enemies[0];
+        wt2_.translation_ = enemyData.translation;
+        wt2_.rotation_ = enemyData.rotation;
+    }
+
     // 環境マッピング設定
-    sneak_->GetModel()->SetEnvironmentSrvIndex(skybox_->GetTextureIndex());
-    sneak_->SetRefrect(true);
-    cube_->GetModel()->SetEnvironmentSrvIndex(skybox_->GetTextureIndex());
-    cube_->SetRefrect(true);
+    player_->GetModel()->SetEnvironmentSrvIndex(skybox_->GetTextureIndex());
+    player_->SetRefrect(true);
 }
 
 void TitleScene::Finalize() {
@@ -66,8 +76,8 @@ void TitleScene::Update() {
     ChangeScene();
 
     emitter_->Update(vp_);
-    sneak_->UpdateAnimation(roop);
-    cube_->UpdateAnimation(roop);
+    player_->UpdateAnimation(roop);
+    enemy_->UpdateAnimation(roop);
 
     skybox_->Update(vp_);
 
@@ -90,23 +100,18 @@ void TitleScene::Draw() {
 
     objCommon_->skinningDrawCommonSetting();
     //-----アニメーションの描画開始-----
-    sneak_->Draw(wt1_, vp_);
-    sneak_->DrawSkeleton(wt1_, vp_);
+    player_->Draw(wt1_, vp_);
+    enemy_->Draw(wt2_, vp_);
     //------------------------------
 
     objCommon_->DrawCommonSetting();
     //-----3DObjectの描画開始-----
-    cube_->Draw(wt2_, vp_);
-
     json_->DrawScene(vp_);
     //--------------------------
 
     /// Particleの描画準備
     ptCommon_->DrawCommonSetting();
     //------Particleの描画開始-------
-
-    emitter_->Draw(Ring);
-    emitter_->DrawEmitter();
 
     //-----------------------------
 
