@@ -5,6 +5,7 @@
 #include <DirectXCommon.h>
 
 #include <myMath.h>
+#include <algorithm>
 
 void Skin::Initialize(const Skeleton& skeleton, const ModelData& modelData)
 {
