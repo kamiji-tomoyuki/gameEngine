@@ -29,10 +29,10 @@ void TitleScene::Initialize() {
     skybox_->Initialize("rostock_laage_airport_4k.dds");
 
     player_ = std::make_unique<Object3d>();
-    player_->Initialize("AnimatedCube.gltf");
+    player_->Initialize("sneakWalk.gltf");
 
     enemy_ = std::make_unique<Object3d>();
-    enemy_->Initialize("Chip2.obj");
+    enemy_->Initialize("AnimatedCube.gltf");
 
     emitter_ = std::make_unique<ParticleEmitter>();
     emitter_->Initialize("test", "debug/ringPlane.obj");
@@ -77,7 +77,7 @@ void TitleScene::Update() {
 
     emitter_->Update(vp_);
     player_->UpdateAnimation(roop);
-    enemy_->Update(wt2_, vp_);
+    enemy_->UpdateAnimation(roop);
 
     skybox_->Update(vp_);
 
@@ -101,11 +101,11 @@ void TitleScene::Draw() {
     objCommon_->skinningDrawCommonSetting();
     //-----アニメーションの描画開始-----
     player_->Draw(wt1_, vp_);
+    enemy_->Draw(wt2_, vp_);
     //------------------------------
 
     objCommon_->DrawCommonSetting();
     //-----3DObjectの描画開始-----
-    enemy_->Draw(wt2_, vp_);
     json_->DrawScene(vp_);
     //--------------------------
 
