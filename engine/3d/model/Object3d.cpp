@@ -19,7 +19,8 @@ void Object3d::Initialize(const std::string &filePath) {
     model = ModelManager::GetInstance()->FindModel(filePath);
     if (model->IsGltf()) {
         modelAnimation_ = std::make_unique<ModelAnimation>();
-        modelAnimation_->SetModelData(model->GetModelData());
+        // 互換性のため GetModelDataLegacy() を使用
+        modelAnimation_->SetModelData(model->GetModelDataLegacy());
         modelAnimation_->Initialize("resources/models/", filePath);
         modelAnimation_->GetAnimator()->SetAnimationTime(0.0f);
 
@@ -81,7 +82,8 @@ void Object3d::UpdateAnimation(bool roop) {
 
 void Object3d::SetAnimation(const std::string &fileName) {
     modelAnimation_ = std::make_unique<ModelAnimation>();
-    modelAnimation_->SetModelData(model->GetModelData());
+    // 互換性のため GetModelDataLegacy() を使用
+    modelAnimation_->SetModelData(model->GetModelDataLegacy());
     modelAnimation_->Initialize("resources/models/", fileName);
     modelAnimation_->GetAnimator()->SetAnimationTime(0.0f);
     model->SetAnimator(modelAnimation_->GetAnimator());

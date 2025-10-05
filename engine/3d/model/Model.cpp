@@ -11,16 +11,17 @@ bool Model::isGltf = false;
 std::unordered_set<std::string> Model::jointNames = {};
 
 void Model::Initialize(ModelCommon *modelCommon, const std::string &directorypath, const std::string &filename) {
-    // --- 引数で受け取りメンバ変数に記録 ---
     modelCommon_ = modelCommon;
     directorypath_ = directorypath;
     filename_ = filename;
     srvManager_ = SrvManager::GetInstance();
 
-    modelData = LoadModelFile(directorypath_, filename_);
+    modelDataEx_ = LoadModelFile(directorypath_, filename_);
 
-    CreateVartexData();
-    CreateIndexResource();
+    // 各メッシュのGPUリソースを作成
+    for (auto &mesh : modelDataEx_.meshes) {
+        CreateMeshResources(mesh);
+    }
 
     // スキニングアニメーションか判別
     Assimp::Importer importer;
@@ -37,19 +38,18 @@ void Model::Initialize(ModelCommon *modelCommon, const std::string &directorypat
     }
 
     // テクスチャ読み込み
-    TextureManager::GetInstance()->LoadTexture(modelData.material.textureFilePath);
-    modelData.material.textureIndex = TextureManager::GetInstance()->GetTextureIndexByFilePath(modelData.material.textureFilePath);
+    for (auto &material : modelDataEx_.materials) {
+        TextureManager::GetInstance()->LoadTexture(material.textureFilePath);
+        material.textureIndex = TextureManager::GetInstance()->GetTextureIndexByFilePath(material.textureFilePath);
+    }
 
-    // アニメーター、ボーン、スキンの初期化は後で行う
     animator_ = nullptr;
     bone_ = nullptr;
     skin_ = nullptr;
 
-    // 環境マッピングの初期化
     useEnvironmentMapping_ = false;
     environmentSrvIndex = 0;
 
-    // デフォルト環境テクスチャが設定されている場合は自動で使用
     if (defaultEnvironmentSrvIndex != 0) {
         environmentSrvIndex = defaultEnvironmentSrvIndex;
         useEnvironmentMapping_ = true;
@@ -57,30 +57,7 @@ void Model::Initialize(ModelCommon *modelCommon, const std::string &directorypat
 }
 
 void Model::Draw() {
-    if (!animator_ || !animator_->HaveAnimation()) {
-        // アニメーションなし - 通常の頂点バッファのみ使用
-        modelCommon_->GetDxCommon()->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
-        modelCommon_->GetDxCommon()->GetCommandList()->IASetIndexBuffer(&indexBufferView);
-        srvManager_->SetGraphicsRootDescriptorTable(2, modelData.material.textureIndex);
-    } else if (!CheckBone()) {
-        // アニメーションあり - 通常の頂点バッファのみ使用
-        modelCommon_->GetDxCommon()->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
-        modelCommon_->GetDxCommon()->GetCommandList()->IASetIndexBuffer(&indexBufferView);
-        srvManager_->SetGraphicsRootDescriptorTable(2, modelData.material.textureIndex);
-    } else {
-        // アニメーションあり - 頂点バッファ + スキニング用バッファ
-        D3D12_VERTEX_BUFFER_VIEW vbvs[2] = {
-            vertexBufferView,
-            skin_->GetSkinCluster().influenceBufferView};
-
-        modelCommon_->GetDxCommon()->GetCommandList()->IASetVertexBuffers(0, 2, vbvs);
-        modelCommon_->GetDxCommon()->GetCommandList()->IASetIndexBuffer(&indexBufferView);
-        srvManager_->SetGraphicsRootDescriptorTable(2, modelData.material.textureIndex);
-        srvManager_->SetGraphicsRootDescriptorTable(7, skin_->GetSrvIndex());
-    }
-
     // 環境マッピングのテクスチャを設定
-    // 個別に設定されている場合はそれを使用、なければデフォルトを使用
     uint32_t envIndex = environmentSrvIndex;
     if (envIndex == 0 && defaultEnvironmentSrvIndex != 0) {
         envIndex = defaultEnvironmentSrvIndex;
@@ -89,34 +66,59 @@ void Model::Draw() {
     if (envIndex != 0) {
         srvManager_->SetGraphicsRootDescriptorTable(6, envIndex);
     } else {
-        // 環境テクスチャが設定されていない場合は、ダミーテクスチャを設定
-        // または白いテクスチャのインデックスを使用
         uint32_t whiteTextureIndex = TextureManager::GetInstance()->GetTextureIndexByFilePath("resources/images/white1x1.png");
         srvManager_->SetGraphicsRootDescriptorTable(6, whiteTextureIndex);
     }
 
-    // --- 描画 ---
-    modelCommon_->GetDxCommon()->GetCommandList()->DrawIndexedInstanced(UINT(modelData.indices.size()), 1, 0, 0, 0);
+    // 各メッシュを描画
+    for (const auto &mesh : modelDataEx_.meshes) {
+        // マテリアルのテクスチャを設定
+        if (mesh.materialIndex < modelDataEx_.materials.size()) {
+            srvManager_->SetGraphicsRootDescriptorTable(2, modelDataEx_.materials[mesh.materialIndex].textureIndex);
+        }
+
+        if (!animator_ || !animator_->HaveAnimation()) {
+            // アニメーションなし
+            modelCommon_->GetDxCommon()->GetCommandList()->IASetVertexBuffers(0, 1, &mesh.vertexBufferView);
+            modelCommon_->GetDxCommon()->GetCommandList()->IASetIndexBuffer(&mesh.indexBufferView);
+        } else if (!CheckBone() || !mesh.hasBones) {
+            // アニメーションありだがボーンなし
+            modelCommon_->GetDxCommon()->GetCommandList()->IASetVertexBuffers(0, 1, &mesh.vertexBufferView);
+            modelCommon_->GetDxCommon()->GetCommandList()->IASetIndexBuffer(&mesh.indexBufferView);
+        } else {
+            // スキニングアニメーション
+            D3D12_VERTEX_BUFFER_VIEW vbvs[2] = {
+                mesh.vertexBufferView,
+                skin_->GetSkinCluster().influenceBufferView};
+
+            modelCommon_->GetDxCommon()->GetCommandList()->IASetVertexBuffers(0, 2, vbvs);
+            modelCommon_->GetDxCommon()->GetCommandList()->IASetIndexBuffer(&mesh.indexBufferView);
+            srvManager_->SetGraphicsRootDescriptorTable(7, skin_->GetSrvIndex());
+        }
+
+        // 描画
+        modelCommon_->GetDxCommon()->GetCommandList()->DrawIndexedInstanced(UINT(mesh.indices.size()), 1, 0, 0, 0);
+    }
 }
 
-void Model::CreateVartexData() {
-    vertexResource = modelCommon_->GetDxCommon()->CreateBufferResource(sizeof(VertexData) * modelData.vertices.size());
-    vertexBufferView.BufferLocation = vertexResource->GetGPUVirtualAddress();
-    vertexBufferView.SizeInBytes = UINT(sizeof(VertexData) * modelData.vertices.size());
-    vertexBufferView.StrideInBytes = sizeof(VertexData);
+void Model::CreateMeshResources(MeshData &mesh) {
+    // 頂点バッファ作成
+    mesh.vertexResource = modelCommon_->GetDxCommon()->CreateBufferResource(sizeof(VertexData) * mesh.vertices.size());
+    mesh.vertexBufferView.BufferLocation = mesh.vertexResource->GetGPUVirtualAddress();
+    mesh.vertexBufferView.SizeInBytes = UINT(sizeof(VertexData) * mesh.vertices.size());
+    mesh.vertexBufferView.StrideInBytes = sizeof(VertexData);
 
-    vertexResource->Map(0, nullptr, reinterpret_cast<void **>(&vertexData));
-    std::memcpy(vertexData, modelData.vertices.data(), sizeof(VertexData) * modelData.vertices.size());
-}
+    mesh.vertexResource->Map(0, nullptr, reinterpret_cast<void **>(&mesh.vertexData));
+    std::memcpy(mesh.vertexData, mesh.vertices.data(), sizeof(VertexData) * mesh.vertices.size());
 
-void Model::CreateIndexResource() {
-    indexResource = modelCommon_->GetDxCommon()->CreateBufferResource(sizeof(uint32_t) * modelData.indices.size());
-    indexBufferView.BufferLocation = indexResource->GetGPUVirtualAddress();
-    indexBufferView.SizeInBytes = UINT(sizeof(uint32_t) * modelData.indices.size());
-    indexBufferView.Format = DXGI_FORMAT_R32_UINT;
+    // インデックスバッファ作成
+    mesh.indexResource = modelCommon_->GetDxCommon()->CreateBufferResource(sizeof(uint32_t) * mesh.indices.size());
+    mesh.indexBufferView.BufferLocation = mesh.indexResource->GetGPUVirtualAddress();
+    mesh.indexBufferView.SizeInBytes = UINT(sizeof(uint32_t) * mesh.indices.size());
+    mesh.indexBufferView.Format = DXGI_FORMAT_R32_UINT;
 
-    indexResource->Map(0, nullptr, reinterpret_cast<void **>(&indexData));
-    std::memcpy(indexData, modelData.indices.data(), sizeof(uint32_t) * modelData.indices.size());
+    mesh.indexResource->Map(0, nullptr, reinterpret_cast<void **>(&mesh.indexData));
+    std::memcpy(mesh.indexData, mesh.indices.data(), sizeof(uint32_t) * mesh.indices.size());
 }
 
 MaterialData Model::LoadMaterialTemplateFile(const std::string &directoryPath, const std::string &filename) {
@@ -139,24 +141,23 @@ MaterialData Model::LoadMaterialTemplateFile(const std::string &directoryPath, c
     }
 
     if (materialData.textureFilePath.empty()) {
-        // テクスチャが設定されていない場合、"white1x1.png" を割り当てる
         materialData.textureFilePath = "resources/images/white1x1.png";
     }
 
     return materialData;
 }
 
-ModelData Model::LoadModelFile(const std::string &directoryPath, const std::string &filename) {
-    ModelData modelData;
+ModelDataEx Model::LoadModelFile(const std::string &directoryPath, const std::string &filename) {
+    ModelDataEx modelDataEx;
 
-    // --- gltfか判定 ---
+    // gltfか判定
     isGltf = false;
     if (filename.size() >= 5 && filename.substr(filename.size() - 5) == ".gltf") {
         isGltf = true;
     } else if (filename.size() >= 4 && filename.substr(filename.size() - 4) == ".obj") {
         isGltf = false;
     } else {
-        assert(false && "Unsupported file format"); // サポート外のフォーマットの場合にアサート
+        assert(false && "Unsupported file format");
     }
 
     Assimp::Importer importer;
@@ -164,80 +165,107 @@ ModelData Model::LoadModelFile(const std::string &directoryPath, const std::stri
     const aiScene *scene = importer.ReadFile(filePath.c_str(), aiProcess_FlipWindingOrder | aiProcess_FlipUVs);
 
     if (!scene || !scene->HasMeshes()) {
-        // テクスチャが設定されていない場合、"white1x1.png" を割り当てる
-        modelData.material.textureFilePath = "resources/images/white1x1.png";
-        return modelData;
+        MaterialData defaultMaterial;
+        defaultMaterial.textureFilePath = "resources/images/white1x1.png";
+        modelDataEx.materials.push_back(defaultMaterial);
+        return modelDataEx;
     }
 
-    // --- メッシュ処理 ---
-    for (uint32_t meshIndex = 0; meshIndex < scene->mNumMeshes; ++meshIndex) {
-        aiMesh *mesh = scene->mMeshes[meshIndex];
-        // 法線、Texcoordがない場合エラーを出力
-        assert(mesh->HasNormals());
-        assert(mesh->HasTextureCoords(0));
-
-        modelData.vertices.resize(mesh->mNumVertices);
-        for (uint32_t vertexIndex = 0; vertexIndex < mesh->mNumVertices; ++vertexIndex) {
-            aiVector3D &position = mesh->mVertices[vertexIndex];
-            aiVector3D &normal = mesh->mNormals[vertexIndex];
-            aiVector3D &texcoord = mesh->mTextureCoords[0][vertexIndex];
-            modelData.vertices[vertexIndex].position = {-position.x, position.y, position.z, 1.0f};
-            modelData.vertices[vertexIndex].normal = {-normal.x, normal.y, normal.z};
-            modelData.vertices[vertexIndex].texcoord = {texcoord.x, texcoord.y};
-        }
-        for (uint32_t faceIndex = 0; faceIndex < mesh->mNumFaces; ++faceIndex) {
-            aiFace &face = mesh->mFaces[faceIndex];
-            assert(face.mNumIndices == 3);
-            for (uint32_t element = 0; element < face.mNumIndices; ++element) {
-                uint32_t vertexIndex = face.mIndices[element];
-                modelData.indices.push_back(vertexIndex);
-            }
-        }
-
-        for (uint32_t boneIndex = 0; boneIndex < mesh->mNumBones; ++boneIndex) {
-            aiBone *bone = mesh->mBones[boneIndex];
-            std::string jointName = bone->mName.C_Str();
-
-            assert(jointNames.find(jointName) == jointNames.end() && "Duplicate joint name detected!");
-            jointNames.insert(jointName);
-
-            aiMatrix4x4 bindPoseMatrixAssimp = bone->mOffsetMatrix.Inverse();
-            aiVector3D scale, translate;
-            aiQuaternion rotate;
-            bindPoseMatrixAssimp.Decompose(scale, rotate, translate);
-
-            Matrix4x4 bindPoseMatrix = MakeAffineMatrix(
-                {scale.x, scale.y, scale.z},
-                {rotate.x, -rotate.y, -rotate.z, rotate.w},
-                {-translate.x, translate.y, translate.z});
-
-            JointWeightData &jointWeightData = modelData.skinClusterData[jointName];
-            jointWeightData.inverseBindPoseMatrix = Inverse(bindPoseMatrix);
-
-            for (uint32_t weightIndex = 0; weightIndex < bone->mNumWeights; ++weightIndex) {
-                jointWeightData.vertexWeights.push_back({bone->mWeights[weightIndex].mWeight,
-                                                         bone->mWeights[weightIndex].mVertexId});
-            }
-        }
-    }
-    // クリア
-    jointNames.clear();
-
-    // --- マテリアル処理 ---
+    // マテリアル処理
+    modelDataEx.materials.resize(scene->mNumMaterials);
     for (uint32_t materialIndex = 0; materialIndex < scene->mNumMaterials; ++materialIndex) {
         aiMaterial *material = scene->mMaterials[materialIndex];
         if (material->GetTextureCount(aiTextureType_DIFFUSE) != 0) {
             aiString textureFilePath;
             material->GetTexture(aiTextureType_DIFFUSE, 0, &textureFilePath);
-            modelData.material.textureFilePath = directoryPath + textureFilePath.C_Str();
+            modelDataEx.materials[materialIndex].textureFilePath = directoryPath + textureFilePath.C_Str();
+        } else {
+            modelDataEx.materials[materialIndex].textureFilePath = "resources/images/white1x1.png";
         }
     }
-    if (modelData.material.textureFilePath.empty()) {
-        // テクスチャが設定されていない場合、"white1x1.png" を割り当てる
-        modelData.material.textureFilePath = "resources/images/white1x1.png";
+
+    // マテリアルがない場合はデフォルトを追加
+    if (modelDataEx.materials.empty()) {
+        MaterialData defaultMaterial;
+        defaultMaterial.textureFilePath = "resources/images/white1x1.png";
+        modelDataEx.materials.push_back(defaultMaterial);
     }
-    modelData.rootNode = ReadNode(scene->mRootNode);
-    return modelData;
+
+    // メッシュ処理
+    modelDataEx.meshes.resize(scene->mNumMeshes);
+    for (uint32_t meshIndex = 0; meshIndex < scene->mNumMeshes; ++meshIndex) {
+        aiMesh *mesh = scene->mMeshes[meshIndex];
+        MeshData &meshData = modelDataEx.meshes[meshIndex];
+
+        // マテリアルインデックスを保存
+        meshData.materialIndex = mesh->mMaterialIndex;
+        if (meshData.materialIndex >= modelDataEx.materials.size()) {
+            meshData.materialIndex = 0;
+        }
+
+        // 法線、Texcoordがない場合エラーを出力
+        assert(mesh->HasNormals());
+        assert(mesh->HasTextureCoords(0));
+
+        // 頂点データ
+        meshData.vertices.resize(mesh->mNumVertices);
+        for (uint32_t vertexIndex = 0; vertexIndex < mesh->mNumVertices; ++vertexIndex) {
+            aiVector3D &position = mesh->mVertices[vertexIndex];
+            aiVector3D &normal = mesh->mNormals[vertexIndex];
+            aiVector3D &texcoord = mesh->mTextureCoords[0][vertexIndex];
+            meshData.vertices[vertexIndex].position = {-position.x, position.y, position.z, 1.0f};
+            meshData.vertices[vertexIndex].normal = {-normal.x, normal.y, normal.z};
+            meshData.vertices[vertexIndex].texcoord = {texcoord.x, texcoord.y};
+        }
+
+        // インデックスデータ
+        for (uint32_t faceIndex = 0; faceIndex < mesh->mNumFaces; ++faceIndex) {
+            aiFace &face = mesh->mFaces[faceIndex];
+            assert(face.mNumIndices == 3);
+            for (uint32_t element = 0; element < face.mNumIndices; ++element) {
+                uint32_t vertexIndex = face.mIndices[element];
+                meshData.indices.push_back(vertexIndex);
+            }
+        }
+
+        // ボーンデータ
+        meshData.hasBones = mesh->HasBones();
+        if (meshData.hasBones) {
+            for (uint32_t boneIndex = 0; boneIndex < mesh->mNumBones; ++boneIndex) {
+                aiBone *bone = mesh->mBones[boneIndex];
+                std::string jointName = bone->mName.C_Str();
+
+                // 重複チェック（グローバルで管理）
+                if (jointNames.find(jointName) == jointNames.end()) {
+                    jointNames.insert(jointName);
+
+                    aiMatrix4x4 bindPoseMatrixAssimp = bone->mOffsetMatrix.Inverse();
+                    aiVector3D scale, translate;
+                    aiQuaternion rotate;
+                    bindPoseMatrixAssimp.Decompose(scale, rotate, translate);
+
+                    Matrix4x4 bindPoseMatrix = MakeAffineMatrix(
+                        {scale.x, scale.y, scale.z},
+                        {rotate.x, -rotate.y, -rotate.z, rotate.w},
+                        {-translate.x, translate.y, translate.z});
+
+                    JointWeightData &jointWeightData = modelDataEx.skinClusterData[jointName];
+                    jointWeightData.inverseBindPoseMatrix = Inverse(bindPoseMatrix);
+
+                    for (uint32_t weightIndex = 0; weightIndex < bone->mNumWeights; ++weightIndex) {
+                        jointWeightData.vertexWeights.push_back({bone->mWeights[weightIndex].mWeight,
+                                                                 bone->mWeights[weightIndex].mVertexId});
+                    }
+                }
+            }
+        }
+    }
+
+    // クリア
+    jointNames.clear();
+
+    modelDataEx.rootNode = ReadNode(scene->mRootNode);
+    return modelDataEx;
 }
 
 Node Model::ReadNode(aiNode *node) {
@@ -258,4 +286,25 @@ Node Model::ReadNode(aiNode *node) {
         result.children[childIndex] = ReadNode(node->mChildren[childIndex]);
     }
     return result;
+}
+
+// 既存のObject3dコードとの互換性のための関数
+ModelData Model::GetModelDataLegacy() {
+    ModelData legacyData;
+
+    // 最初のメッシュのデータを返す（単一メッシュとして扱う）
+    if (!modelDataEx_.meshes.empty()) {
+        legacyData.vertices = modelDataEx_.meshes[0].vertices;
+        legacyData.indices = modelDataEx_.meshes[0].indices;
+    }
+
+    // 最初のマテリアルを返す
+    if (!modelDataEx_.materials.empty()) {
+        legacyData.material = modelDataEx_.materials[0];
+    }
+
+    legacyData.skinClusterData = modelDataEx_.skinClusterData;
+    legacyData.rootNode = modelDataEx_.rootNode;
+
+    return legacyData;
 }

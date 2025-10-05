@@ -9,6 +9,7 @@
 #include "array"
 #include "map"
 #include "span"
+#include "vector"
 
 #include "assimp/Importer.hpp"
 #include "assimp/postprocess.h"
@@ -28,7 +29,6 @@ class Model {
     /// <summary>
     /// 初期化
     /// </summary>
-    /// <param name="modelCommon"></param>
     void Initialize(ModelCommon *modelCommon, const std::string &directorypath, const std::string &filename);
 
     /// <summary>
@@ -43,12 +43,11 @@ class Model {
     bool IsGltf() { return isGltf; }
 
     /// 各ステータス取得関数
-    /// <returns></returns>
-    ModelData GetModelData() { return modelData; }
+    ModelDataEx GetModelData() { return modelDataEx_; }
+    ModelData GetModelDataLegacy(); // 既存コードとの互換性用
     bool CheckBone() const { return hasBone_; }
 
     /// 各ステータス設定関数
-    /// <returns></returns>
     void SetSrv(SrvManager *srvManager) { srvManager_ = srvManager; }
     void SetAnimator(Animator *animator) { animator_ = animator; }
     void SetSkin(Skin *skin) { skin_ = skin; }
@@ -58,58 +57,32 @@ class Model {
 
   private:
     /// <summary>
-    /// 頂点データ作成
+    /// メッシュ単位の頂点データ作成
     /// </summary>
-    void CreateVartexData();
-
-    /// <summary>
-    /// indexの作成
-    /// </summary>
-    void CreateIndexResource();
+    void CreateMeshResources(MeshData &mesh);
 
     /// <summary>
     /// .mtlファイルの読み取り
     /// </summary>
-    /// <param name="directoryPath"></param>
-    /// <param name="filename"></param>
-    /// <returns></returns>
     static MaterialData LoadMaterialTemplateFile(const std::string &directoryPath, const std::string &filename);
 
     /// <summary>
-    ///  .objファイルの読み取り
+    ///  モデルファイルの読み取り
     /// </summary>
-    /// <param name="directoryPath"></param>
-    /// <param name="filename"></param>
-    /// <returns></returns>
-    static ModelData LoadModelFile(const std::string &directoryPath, const std::string &filename);
+    static ModelDataEx LoadModelFile(const std::string &directoryPath, const std::string &filename);
 
     /// <summary>
     /// ノード読み取り
     /// </summary>
-    /// <param name="node"></param>
-    /// <returns></returns>
     static Node ReadNode(aiNode *node);
 
   private:
     ModelCommon *modelCommon_;
-
-    ModelData modelData;
+    ModelDataEx modelDataEx_;
     SrvManager *srvManager_;
-
-    // vertexResource
-    Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource = nullptr;
-    VertexData *vertexData = nullptr;
-    D3D12_VERTEX_BUFFER_VIEW vertexBufferView;
-
-    // indexResource
-    Microsoft::WRL::ComPtr<ID3D12Resource> indexResource = nullptr;
-    uint32_t *indexData;
-    D3D12_INDEX_BUFFER_VIEW indexBufferView;
 
     std::string filename_;
     std::string directorypath_;
-
-    Matrix4x4 localMatrix;
 
     static bool isGltf;
     Animator *animator_;

@@ -76,6 +76,31 @@ struct ModelData
 	Node rootNode;
 };
 
+struct MeshData {
+    std::vector<VertexData> vertices;
+    std::vector<uint32_t> indices;
+    uint32_t materialIndex;
+
+    // GPU リソース
+    Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource = nullptr;
+    VertexData *vertexData = nullptr;
+    D3D12_VERTEX_BUFFER_VIEW vertexBufferView;
+
+    Microsoft::WRL::ComPtr<ID3D12Resource> indexResource = nullptr;
+    uint32_t *indexData = nullptr;
+    D3D12_INDEX_BUFFER_VIEW indexBufferView;
+
+    bool hasBones = false;
+};
+
+struct ModelDataEx {
+    std::vector<MeshData> meshes;
+    std::vector<MaterialData> materials;
+    std::map<std::string, JointWeightData> skinClusterData;
+    Node rootNode;
+};
+
+
 static const uint32_t kNumMaxInfluence = 4;
 struct VertexInfluence {
 	std::array<float, kNumMaxInfluence> weights;
