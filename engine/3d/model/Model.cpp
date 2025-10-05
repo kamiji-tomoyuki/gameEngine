@@ -191,8 +191,16 @@ ModelDataEx Model::LoadModelFile(const std::string &directoryPath, const std::st
         modelDataEx.materials.push_back(defaultMaterial);
     }
 
+    // 全頂点数をカウント（スキニング用）
+    uint32_t totalVertexCount = 0;
+    for (uint32_t meshIndex = 0; meshIndex < scene->mNumMeshes; ++meshIndex) {
+        totalVertexCount += scene->mMeshes[meshIndex]->mNumVertices;
+    }
+
     // メッシュ処理
     modelDataEx.meshes.resize(scene->mNumMeshes);
+    uint32_t vertexOffset = 0; // 各メッシュの頂点オフセット
+
     for (uint32_t meshIndex = 0; meshIndex < scene->mNumMeshes; ++meshIndex) {
         aiMesh *mesh = scene->mMeshes[meshIndex];
         MeshData &meshData = modelDataEx.meshes[meshIndex];
@@ -251,14 +259,22 @@ ModelDataEx Model::LoadModelFile(const std::string &directoryPath, const std::st
 
                     JointWeightData &jointWeightData = modelDataEx.skinClusterData[jointName];
                     jointWeightData.inverseBindPoseMatrix = Inverse(bindPoseMatrix);
+                }
 
-                    for (uint32_t weightIndex = 0; weightIndex < bone->mNumWeights; ++weightIndex) {
-                        jointWeightData.vertexWeights.push_back({bone->mWeights[weightIndex].mWeight,
-                                                                 bone->mWeights[weightIndex].mVertexId});
-                    }
+                // 頂点ウェイトを追加（グローバル頂点インデックスに変換）
+                JointWeightData &jointWeightData = modelDataEx.skinClusterData[jointName];
+                for (uint32_t weightIndex = 0; weightIndex < bone->mNumWeights; ++weightIndex) {
+                    uint32_t localVertexIndex = bone->mWeights[weightIndex].mVertexId;
+                    uint32_t globalVertexIndex = vertexOffset + localVertexIndex;
+                    jointWeightData.vertexWeights.push_back({
+                        bone->mWeights[weightIndex].mWeight,
+                        globalVertexIndex // グローバルインデックスを使用
+                    });
                 }
             }
         }
+
+        vertexOffset += mesh->mNumVertices; // 次のメッシュ用にオフセットを更新
     }
 
     // クリア
@@ -292,13 +308,21 @@ Node Model::ReadNode(aiNode *node) {
 ModelData Model::GetModelDataLegacy() {
     ModelData legacyData;
 
-    // 最初のメッシュのデータを返す（単一メッシュとして扱う）
-    if (!modelDataEx_.meshes.empty()) {
-        legacyData.vertices = modelDataEx_.meshes[0].vertices;
-        legacyData.indices = modelDataEx_.meshes[0].indices;
+    // 全メッシュの頂点とインデックスを結合
+    uint32_t vertexOffset = 0;
+    for (const auto &mesh : modelDataEx_.meshes) {
+        // 頂点を追加
+        legacyData.vertices.insert(legacyData.vertices.end(), mesh.vertices.begin(), mesh.vertices.end());
+
+        // インデックスを追加（オフセットを適用）
+        for (uint32_t index : mesh.indices) {
+            legacyData.indices.push_back(index + vertexOffset);
+        }
+
+        vertexOffset += static_cast<uint32_t>(mesh.vertices.size());
     }
 
-    // 最初のマテリアルを返す
+    // 最初のマテリアルを返す（互換性のため）
     if (!modelDataEx_.materials.empty()) {
         legacyData.material = modelDataEx_.materials[0];
     }
